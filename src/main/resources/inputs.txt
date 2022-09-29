@@ -1,0 +1,7 @@
+mass 70
+K 4000
+gamma 100
+step 0.01
+tf 5
+A 1
+r(t=0) 1

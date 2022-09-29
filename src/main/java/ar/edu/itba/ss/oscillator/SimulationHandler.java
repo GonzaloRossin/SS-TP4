@@ -1,0 +1,79 @@
+package ar.edu.itba.ss.oscillator;
+
+import ar.edu.itba.ss.Particle;
+import ar.edu.itba.ss.Vector2;
+
+public class SimulationHandler {
+    private Particle verletP, analyticP;
+    private double K;
+    private double gamma;
+    private double tf;
+    private double actualTime = 0, step;
+
+
+    public SimulationHandler(double pMass, Vector2 r, Vector2 v, double K, double gamma, double tf, double step) {
+        this.K = K;
+        this.gamma = gamma;
+        this.tf = tf;
+        this.verletP = new Particle(0 , pMass, r, gamma);
+        this.analyticP = new Particle(1, pMass, new Vector2(r.getX(), 0.3), gamma);
+        this.step = step;
+    }
+
+    public void initVerlet() {
+        verletP.setActualForce(calculateForce(verletP));
+        verletP.applyEulerModified(step);
+    }
+
+    public void iterate() {
+        verletP.setActualForce(calculateForce(verletP));
+        verletP.applyVerlet(step);
+
+        analyticP.setActualR(calculateAnalyticR(analyticP));
+        actualTime += step;
+    }
+
+    public Vector2 calculateAnalyticR(Particle p) {
+        double exp = Math.exp(-(gamma/(2 * p.getMass())) * actualTime);
+
+        double kDivM = K / p.getMass();
+        double ggDiv4mm = (gamma * gamma) / (4 * p.getMass() * p.getMass());
+        double pow = Math.pow(kDivM - ggDiv4mm, 0.5);
+        double cos = Math.cos(pow * actualTime);
+
+        return new Vector2(exp * cos, p.getActualR().getY());
+    }
+
+
+    public Vector2 calculateForce(Particle p) {
+        return new Vector2(-K * p.getActualR().getX() - gamma * p.getActualV().getX(), 0);
+    }
+
+    public Particle getVerletP() {
+        return verletP;
+    }
+
+    public Particle getAnalyticP() {
+        return analyticP;
+    }
+
+    public double getK() {
+        return K;
+    }
+
+    public double getGamma() {
+        return gamma;
+    }
+
+    public double getTf() {
+        return tf;
+    }
+
+    public double getActualTime() {
+        return actualTime;
+    }
+
+    public double getStep() {
+        return step;
+    }
+}
