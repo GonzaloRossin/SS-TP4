@@ -6,26 +6,34 @@ public class Particle {
     private double rc;
     private Vector2 actualR, lastR = new Vector2(0,0);
     private Vector2 actualV, lastV = new Vector2(0,0);
-    private Vector2 actualForce;
+    private Vector2 actualForce, lastForce, nextForce;
     private double mass;
     private int id;
     private int color;
     private double gamma;
+    private double K;
 
-    public Particle(int id, double mass, Vector2 r, double gamma) {
+    public Particle(int id, double mass, Vector2 r, double gamma, double K, int color) {
         this.actualR = r;
         this.actualV = new Vector2(-r.getX() * (gamma / (2 * mass)), 0);
         this.id = id;
         this.mass = mass;
-        this.color = 0;
+        this.color = color;
         this.gamma = gamma;
+        this.K = K;
     }
 
     Particle(double x, double y) {
         this.actualR = new Vector2(x, y);
     }
 
+    public Vector2 calculateForce(Vector2 R, Vector2 V) {
+        return new Vector2(-K * R.getX() - gamma * V.getX(), 0);
+    }
+
     public void applyEulerModified(double step) {
+        lastForce = actualForce;
+        actualForce = calculateForce(actualR, actualV);
         // Only for X, it is a linear problem
         lastV.setX(actualV.getX());
         actualV.setX(actualV.getX() + (step / mass) * actualForce.getX());
@@ -40,14 +48,43 @@ public class Particle {
     }
 
     public void applyVerlet(double step) {
-        Vector2 nextR = new Vector2(2 * actualR.getX() - lastR.getX() + (step * step / mass) * actualForce.getX(), 0);
+        lastForce = actualForce;
+        actualForce = calculateForce(actualR, actualV);
 
+        Vector2 nextR = new Vector2(2 * actualR.getX() - lastR.getX() + (step * step / mass) * actualForce.getX(), 0);
         actualV.setX((nextR.getX() - lastR.getX()) / (2 * step));
 
         lastR = actualR;
         actualR = nextR;
+    }
 
+    public void applyBeeman(double step) {
+        lastForce = actualForce;
+        actualForce = calculateForce(actualR, actualV);
 
+        Vector2 actualA = actualForce.scalarProduct(1.0/mass);
+        Vector2 lastA = lastForce.scalarProduct(1.0/mass);
+
+        Vector2 rTerm1 = actualV.scalarProduct(step);
+        Vector2 rTerm2 = actualA.scalarProduct((2.0/3.0) * step * step);
+        Vector2 rTerm3 = lastA.scalarProduct((1.0/6.0) * step * step);
+
+        // Stores in actualR the position r(t + step)
+        actualR = actualR.sum(rTerm1).sum(rTerm2).substract(rTerm3);
+
+        // Calculates predicted velocity
+        Vector2 predictV = actualV.sum(actualA.scalarProduct((3.0/2.0) * step)).substract(lastA.scalarProduct((1.0/2.0) * step));
+
+        // Calculate force in t + step
+        nextForce = calculateForce(actualR, predictV);
+        Vector2 nextA = nextForce.scalarProduct(1.0/mass);
+
+        // Calculate corrected velocity
+        Vector2 term1 = nextA.scalarProduct((1.0/3.0) * step);
+        Vector2 term2 = actualA.scalarProduct((5.0/6.0) * step);
+        Vector2 term3 = lastA.scalarProduct((1.0/6.0) * step);
+
+        actualV = actualV.sum(term1).sum(term2).substract(term3);
     }
 
     public void setActualR(Vector2 actualR) {

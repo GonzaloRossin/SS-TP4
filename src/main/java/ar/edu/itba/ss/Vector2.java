@@ -12,16 +12,24 @@ public class Vector2 {
         return this.x * v.getX() + this.y * v.getY();
     }
 
+    public Vector2 scalarProduct(double k) {
+        return new Vector2(x * k, y * k);
+    }
+
+    public Vector2 substract(Vector2 v) {
+        return new Vector2(getX() - v.getX(), getY() - v.getY());
+    }
+
+    public Vector2 sum(Vector2 v) {
+        return new Vector2(x + v.getX(), y + getY());
+    }
+
     @Override
     public String toString() {
         return "Vector2{" +
                 "x=" + x +
                 ", y=" + y +
                 '}';
-    }
-
-    public Vector2 substract(Vector2 v) {
-        return new Vector2(v.getX() - getX(), v.getY() - getY());
     }
 
     public double getX() {

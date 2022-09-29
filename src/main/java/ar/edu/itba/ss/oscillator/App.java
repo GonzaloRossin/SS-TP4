@@ -26,18 +26,18 @@ public class App {
 
 
         PrintWriter pw = Utils.openFile("output/anim/verlet.xyz");
-        String size = "4\n\n";
+        String size = "5\n\n";
         String limits = "1 0 255\n-1 0 255\n";
 
-        Utils.writeToFile(pw, size + limits + handler.getVerletP().toXYZ() + handler.getAnalyticP().toXYZ());
+        Utils.writeToFile(pw, size + limits + handler.printParticles());
 
         double outerStep = 0.01, lastTime = handler.getActualTime();
-        handler.initVerlet();
+        handler.initParticles();
         while (handler.getActualTime() < handler.getTf()) {
             handler.iterate();
             if (handler.getActualTime() - lastTime > outerStep ) {
                 lastTime = handler.getActualTime();
-                Utils.writeToFile(pw, size + limits + handler.getVerletP().toXYZ() + handler.getAnalyticP().toXYZ());
+                Utils.writeToFile(pw, size + limits + handler.printParticles());
             }
         }
     }

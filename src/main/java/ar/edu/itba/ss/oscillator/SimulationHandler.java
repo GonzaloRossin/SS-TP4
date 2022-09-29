@@ -4,7 +4,7 @@ import ar.edu.itba.ss.Particle;
 import ar.edu.itba.ss.Vector2;
 
 public class SimulationHandler {
-    private Particle verletP, analyticP;
+    private Particle verletP, analyticP, beemanP;
     private double K;
     private double gamma;
     private double tf;
@@ -15,19 +15,21 @@ public class SimulationHandler {
         this.K = K;
         this.gamma = gamma;
         this.tf = tf;
-        this.verletP = new Particle(0 , pMass, r, gamma);
-        this.analyticP = new Particle(1, pMass, new Vector2(r.getX(), 0.3), gamma);
+        this.verletP = new Particle(0 , pMass, r, gamma, K, 0);
+        this.analyticP = new Particle(1, pMass, new Vector2(r.getX(), 0.3), gamma, K, 20);
+        this.beemanP = new Particle(1, pMass, new Vector2(r.getX(), 0), gamma, K, 200);
         this.step = step;
     }
 
-    public void initVerlet() {
-        verletP.setActualForce(calculateForce(verletP));
+    public void initParticles() {
         verletP.applyEulerModified(step);
+        beemanP.applyEulerModified(step);
+        actualTime += step;
     }
 
     public void iterate() {
-        verletP.setActualForce(calculateForce(verletP));
         verletP.applyVerlet(step);
+        beemanP.applyBeeman(step);
 
         analyticP.setActualR(calculateAnalyticR(analyticP));
         actualTime += step;
@@ -44,10 +46,13 @@ public class SimulationHandler {
         return new Vector2(exp * cos, p.getActualR().getY());
     }
 
-
-    public Vector2 calculateForce(Particle p) {
-        return new Vector2(-K * p.getActualR().getX() - gamma * p.getActualV().getX(), 0);
+    public String printParticles() {
+        return String.format("%s%s%s", analyticP.toXYZ(), verletP.toXYZ(), beemanP.toXYZ());
     }
+//
+//    public String printParticles() {
+//        return String.format("%s%s", analyticP.toXYZ(), verletP.toXYZ());
+//    }
 
     public Particle getVerletP() {
         return verletP;
