@@ -4,7 +4,7 @@ import ar.edu.itba.ss.Particle;
 import ar.edu.itba.ss.Vector2;
 
 public class SimulationHandler {
-    private Particle verletP, analyticP, beemanP;
+    private Particle verletP, analyticP, beemanP, gearPredictorP;
     private double K;
     private double gamma;
     private double tf;
@@ -18,6 +18,7 @@ public class SimulationHandler {
         this.verletP = new Particle(0 , pMass, r, gamma, K, 0);
         this.analyticP = new Particle(1, pMass, new Vector2(r.getX(), 0.3), gamma, K, 20);
         this.beemanP = new Particle(1, pMass, new Vector2(r.getX(), 0), gamma, K, 200);
+        this.gearPredictorP = new Particle(1, pMass, new Vector2(r.getX(), 0), gamma, K, 100);
         this.step = step;
     }
 
@@ -30,6 +31,7 @@ public class SimulationHandler {
     public void iterate() {
         verletP.applyVerlet(step);
         beemanP.applyBeeman(step);
+        gearPredictorP.applyGearPredictor5(step);
 
         analyticP.setActualR(calculateAnalyticR(analyticP));
         actualTime += step;
@@ -47,12 +49,12 @@ public class SimulationHandler {
     }
 
     public String printParticles() {
-        return String.format("%s%s%s", analyticP.toXYZ(), verletP.toXYZ(), beemanP.toXYZ());
+        return String.format("%s%s%s%s", analyticP.toXYZ(), verletP.toXYZ(), beemanP.toXYZ(), gearPredictorP.toXYZ());
     }
-//
-//    public String printParticles() {
-//        return String.format("%s%s", analyticP.toXYZ(), verletP.toXYZ());
-//    }
+    public String printGear() {
+        return String.format("%s%s", analyticP.toXYZ(), gearPredictorP.toXYZ());
+    }
+
 
     public Particle getVerletP() {
         return verletP;

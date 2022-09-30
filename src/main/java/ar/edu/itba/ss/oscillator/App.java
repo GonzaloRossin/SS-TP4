@@ -26,7 +26,7 @@ public class App {
 
 
         PrintWriter pw = Utils.openFile("output/anim/verlet.xyz");
-        String size = "5\n\n";
+        String size = "6\n\n";
         String limits = "1 0 255\n-1 0 255\n";
 
         Utils.writeToFile(pw, size + limits + handler.printParticles());

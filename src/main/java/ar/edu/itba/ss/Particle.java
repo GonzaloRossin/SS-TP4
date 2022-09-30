@@ -1,5 +1,7 @@
 package ar.edu.itba.ss;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Particle {
@@ -34,6 +36,7 @@ public class Particle {
     public void applyEulerModified(double step) {
         lastForce = actualForce;
         actualForce = calculateForce(actualR, actualV);
+        Vector2 a = actualForce.scalarProduct(1/mass);
         // Only for X, it is a linear problem
         lastV.setX(actualV.getX());
         actualV.setX(actualV.getX() + (step / mass) * actualForce.getX());
@@ -85,6 +88,69 @@ public class Particle {
         Vector2 term3 = lastA.scalarProduct((1.0/6.0) * step);
 
         actualV = actualV.sum(term1).sum(term2).substract(term3);
+    }
+
+    public void applyGearPredictor5(double step) {
+
+        // Primer paso, predecir hasta el 5to grado
+        actualForce = calculateForce(actualR, actualV);
+
+        Vector2 r = actualR;
+        Vector2 r1 = actualV;
+        Vector2 r2 = actualForce.scalarProduct(1/mass);
+        Vector2 r3 = calculateForce(r1, r2).scalarProduct(1/mass);
+        Vector2 r4 = calculateForce(r2, r3).scalarProduct(1/mass);
+        Vector2 r5 = calculateForce(r3, r4).scalarProduct(1/mass);
+
+        List<Vector2> rList = new ArrayList<>();
+        rList.add(r); rList.add(r1); rList.add(r2); rList.add(r3); rList.add(r4); rList.add(r5);
+
+        List<Vector2> rPList = new ArrayList<>();
+
+        for (int i = 0; i < rList.size(); i++) {
+            Vector2 auxR = new Vector2(0,0);
+            for (int j = i; j < rList.size(); j++) {
+                double stepPow = Math.pow(step, j - i);
+                double fact = fact(j - i);
+
+                Vector2 toSum = rList.get(j).scalarProduct(stepPow / fact);
+                auxR = auxR.sum(toSum);
+            }
+            rPList.add(auxR);
+        }
+
+        // Segundo paso del gear predictor
+        Vector2 forceP = calculateForce(rPList.get(0), rPList.get(1));
+        Vector2 aP = forceP.scalarProduct(1/mass);
+
+        Vector2 deltaA = aP.substract(rPList.get(2));
+
+        double R2term = (step * step) / fact(2);
+        Vector2 R2 = deltaA.scalarProduct(R2term);
+
+        // Tercer paso del gear predictor
+        List<Vector2> rCList = new ArrayList<>();
+        double[] alpha = {3.0/16.0, 251.0 / 360.0, 1.0, 11.0/18.0, 1.0/6.0, 1.0/60.0};
+
+        for (int i = 0; i < rPList.size(); i++) {
+            double stepPow = Math.pow(step,i);
+            double fact = fact(i);
+
+            Vector2 cTerm1 = rPList.get(i);
+            Vector2 cTerm2 = R2.scalarProduct(alpha[i] * fact * stepPow);
+            rCList.add(cTerm1.sum(cTerm2));
+        }
+
+        actualR = rCList.get(0);
+        actualV = rCList.get(1);
+    }
+
+    public double fact(int n) {
+        double fact = 1;
+        for (int i = 2; i <= n; i++) {
+            fact = fact * i;
+        }
+        return fact;
     }
 
     public void setActualR(Vector2 actualR) {
