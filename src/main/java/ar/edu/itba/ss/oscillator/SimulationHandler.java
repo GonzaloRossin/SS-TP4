@@ -49,10 +49,6 @@ public class SimulationHandler {
     public String printParticles() {
         return String.format("%s%s%s", analyticP.toXYZ(), verletP.toXYZ(), beemanP.toXYZ());
     }
-//
-//    public String printParticles() {
-//        return String.format("%s%s", analyticP.toXYZ(), verletP.toXYZ());
-//    }
 
     public Particle getVerletP() {
         return verletP;

@@ -10,6 +10,7 @@ public class Utils {
     public static PrintWriter openFile(String filepath) {
         try {
             new File(filepath).delete();
+            new File(filepath).createNewFile();
             FileWriter fw = new FileWriter(filepath, true);
             BufferedWriter bw = new BufferedWriter(fw);
             return new PrintWriter(bw);
