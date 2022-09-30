@@ -8,6 +8,9 @@ import ar.edu.itba.ss.Vector2;
 import java.io.*;
 import java.util.Scanner;
 
+import static ar.edu.itba.ss.Utils.openFile;
+import static ar.edu.itba.ss.Utils.writeToFile;
+
 /**
  * Hello world!
  *
@@ -27,12 +30,12 @@ public class App {
         SimulationHandler handler = readTxt(scanner);
 
 
-        PrintWriter pw = Utils.openFile("output/anim/verlet.xyz");
+        PrintWriter pw = openFile("output/anim/verlet.xyz");
         String size = "6\n\n";
         String limits = "1 0 255\n-1 0 255\n";
         DataAcumulator dataAccumulator = new DataAcumulator();
 
-        Utils.writeToFile(pw, size + limits + handler.printParticles());
+        writeToFile(pw, size + limits + handler.printParticles());
 
         double outerStep = 0.01, lastTime = handler.getActualTime();
         handler.initParticles();
@@ -40,12 +43,14 @@ public class App {
             handler.iterate(dataAccumulator);
             if (handler.getActualTime() - lastTime > outerStep ) {
                 lastTime = handler.getActualTime();
-                Utils.writeToFile(pw, size + limits + handler.printParticles());
+                writeToFile(pw, size + limits + handler.printParticles());
             }
         }
         JsonPrinter jsonPrinter = new JsonPrinter();
         jsonPrinter.createArray(dataAccumulator);
-        System.out.println("hola");
+        String str2 = String.format("plots/positionOverTime.json");
+        PrintWriter positionsVsT = openFile(str2);
+        writeToFile(positionsVsT, jsonPrinter.getDataArray().toJSONString());
     }
 
     public static SimulationHandler readTxt(Scanner scanner) {
