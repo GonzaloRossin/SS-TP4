@@ -24,6 +24,11 @@ public class Vector2 {
         return new Vector2(x + v.getX(), y + getY());
     }
 
+    public void set(Vector2 v) {
+        x = v.getX();
+        y = v.getY();
+    }
+
     @Override
     public String toString() {
         return "Vector2{" +
