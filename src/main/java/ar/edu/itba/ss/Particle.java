@@ -50,7 +50,7 @@ public class Particle {
         actualR.setY(getActualR().getY() + getActualV().getY() * t);
     }
 
-    public void applyVerlet(double step) {
+    public Double applyVerlet(double step) {
         lastForce = actualForce;
         actualForce = calculateForce(actualR, actualV);
 
@@ -59,9 +59,10 @@ public class Particle {
 
         lastR = actualR;
         actualR = nextR;
+        return lastR.getX();
     }
 
-    public void applyBeeman(double step) {
+    public Double applyBeeman(double step) {
         lastForce = actualForce;
         actualForce = calculateForce(actualR, actualV);
 
@@ -88,9 +89,11 @@ public class Particle {
         Vector2 term3 = lastA.scalarProduct((1.0/6.0) * step);
 
         actualV = actualV.sum(term1).sum(term2).substract(term3);
+
+        return actualR.getX();
     }
 
-    public void applyGearPredictor5(double step) {
+    public Double applyGearPredictor5(double step) {
 
         // Primer paso, predecir hasta el 5to grado
         actualForce = calculateForce(actualR, actualV);
@@ -143,6 +146,7 @@ public class Particle {
 
         actualR = rCList.get(0);
         actualV = rCList.get(1);
+        return actualR.getX();
     }
 
     public double fact(int n) {

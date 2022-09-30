@@ -1,28 +1,49 @@
 package ar.edu.itba.ss;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataAcumulator {
     private List<Double> Tlist;
-    private List<Double> Plist;
-    private List<Double> Error;
+    private Map<Algorithm, List<Double>> positions;
+    private Map<Algorithm, List<Double>> errors;
 
     public DataAcumulator() {
         Tlist = new ArrayList<>();
-        Plist = new ArrayList<>();
-        Error = new ArrayList<>();
+        positions = new HashMap<>();
+        positions.put(Algorithm.ANALITYCAL, new ArrayList<Double>());
+        positions.put(Algorithm.VERLET, new ArrayList<Double>());
+        positions.put(Algorithm.BEEMAN, new ArrayList<Double>());
+        positions.put(Algorithm.GCP, new ArrayList<Double>());
+        errors = new HashMap<>();
+        errors.put(Algorithm.ANALITYCAL, new ArrayList<Double>());
+        errors.put(Algorithm.VERLET, new ArrayList<Double>());
+        errors.put(Algorithm.BEEMAN, new ArrayList<Double>());
+        errors.put(Algorithm.GCP, new ArrayList<Double>());
     }
 
-    public void addP(Double i) {
-        this.Plist.add(i);
+    public void addP(Double position, Algorithm algorithm) {
+        positions.get(algorithm).add(position);
     }
 
     public void addT(Double i) {
         this.Tlist.add(i);
     }
-    public void addError(Double i) {
-        this.Error.add(i);
+    public void addError(Double i,Algorithm algorithm) {
+        this.errors.get(algorithm).add(i);
     }
 
+    public List<Double> getTlist() {
+        return Tlist;
+    }
+
+    public Map<Algorithm, List<Double>> getPositions() {
+        return positions;
+    }
+
+    public Map<Algorithm, List<Double>> getErrors() {
+        return errors;
+    }
 }

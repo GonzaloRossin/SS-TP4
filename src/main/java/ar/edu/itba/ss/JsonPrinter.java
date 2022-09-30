@@ -12,13 +12,19 @@ public class JsonPrinter {
         this.dataArray = new JSONArray();
     }
 
-    public void addStep(double positionAnalytical, double posistionVerlet, double positionBeeman, double positionGCP, double T, double error) {
+    public void createArray(DataAcumulator dataAccumulator){
+        for(int i = 0; i < dataAccumulator.getTlist().size();i++){
+            addStep(dataAccumulator, i);
+        }
+    }
+
+    public void addStep(DataAcumulator dataAcumulator, int iteration) {
         JSONObject step = new JSONObject();
-        step.put("time", T);
-        step.put("pAnalytical", positionAnalytical);
-        step.put("pVerlet", posistionVerlet);
-        step.put("pBeeman", positionBeeman);
-        step.put("pGCP", positionGCP);
+        step.put("time", dataAcumulator.getTlist().get(iteration));
+        step.put("pAnalytical", dataAcumulator.getPositions().get(Algorithm.ANALITYCAL).get(iteration));
+        step.put("pVerlet", dataAcumulator.getPositions().get(Algorithm.VERLET).get(iteration));
+        step.put("pBeeman", dataAcumulator.getPositions().get(Algorithm.BEEMAN).get(iteration));
+        step.put("pGCP", dataAcumulator.getPositions().get(Algorithm.GCP).get(iteration));
         step.put("error", 0);
         dataArray.add(step);
     }

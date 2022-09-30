@@ -1,5 +1,7 @@
 package ar.edu.itba.ss.oscillator;
 
+import ar.edu.itba.ss.DataAcumulator;
+import ar.edu.itba.ss.JsonPrinter;
 import ar.edu.itba.ss.Utils;
 import ar.edu.itba.ss.Vector2;
 
@@ -28,18 +30,22 @@ public class App {
         PrintWriter pw = Utils.openFile("output/anim/verlet.xyz");
         String size = "6\n\n";
         String limits = "1 0 255\n-1 0 255\n";
+        DataAcumulator dataAccumulator = new DataAcumulator();
 
         Utils.writeToFile(pw, size + limits + handler.printParticles());
 
         double outerStep = 0.01, lastTime = handler.getActualTime();
         handler.initParticles();
         while (handler.getActualTime() < handler.getTf()) {
-            handler.iterate();
+            handler.iterate(dataAccumulator);
             if (handler.getActualTime() - lastTime > outerStep ) {
                 lastTime = handler.getActualTime();
                 Utils.writeToFile(pw, size + limits + handler.printParticles());
             }
         }
+        JsonPrinter jsonPrinter = new JsonPrinter();
+        jsonPrinter.createArray(dataAccumulator);
+        System.out.println("hola");
     }
 
     public static SimulationHandler readTxt(Scanner scanner) {
