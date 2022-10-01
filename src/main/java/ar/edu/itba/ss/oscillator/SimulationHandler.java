@@ -1,5 +1,7 @@
 package ar.edu.itba.ss.oscillator;
 
+import ar.edu.itba.ss.Algorithm;
+import ar.edu.itba.ss.DataAcumulator;
 import ar.edu.itba.ss.Particle;
 import ar.edu.itba.ss.Vector2;
 
@@ -28,12 +30,15 @@ public class SimulationHandler {
         actualTime += step;
     }
 
-    public void iterate() {
-        verletP.applyVerlet(step);
-        beemanP.applyBeeman(step);
-        gearPredictorP.applyGearPredictor5(step);
+    public void iterate(DataAcumulator dataAcumulator) {
+
+        dataAcumulator.addT(actualTime);
+        dataAcumulator.addP(verletP.applyVerlet(step), Algorithm.VERLET);
+        dataAcumulator.addP(beemanP.applyBeeman(step), Algorithm.BEEMAN);
+        dataAcumulator.addP(gearPredictorP.applyGearPredictor5(step), Algorithm.GCP);
 
         analyticP.setActualR(calculateAnalyticR(analyticP));
+        dataAcumulator.addP(analyticP.getActualR().getX(), Algorithm.ANALITYCAL);
         actualTime += step;
     }
 
