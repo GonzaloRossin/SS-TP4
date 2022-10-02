@@ -25,6 +25,12 @@ def error(deltaVerlet, errorVerlet, deltaBeeman, errorBeeman, deltaGCP, errorGCP
 
 
 df = pd.read_json('positionOverTime.json')
+df2 = pd.read_json('errorsOverDelta.json')
+
+delta = df2['delta']
+errorVerlet = df2['errorVerlet']
+errorBeeman = df2['errorBeeman']
+errorGCP = df2['errorGCP']
 
 pAnalytical = df['pAnalytical']
 pBeeman = df['pBeeman']
@@ -33,3 +39,4 @@ pVerlet = df['pVerlet']
 x = df['time']
 
 mov_oscilador(x, pAnalytical, x, pVerlet, x, pBeeman, x, pGCP)
+error(delta, errorVerlet, delta, errorBeeman, delta, errorGCP)

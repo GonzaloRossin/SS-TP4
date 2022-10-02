@@ -27,16 +27,15 @@ public class App {
 
         // Initiate setup
         Scanner scanner = new Scanner(is);
-        SimulationHandler handler = readTxt(scanner);
 
 
         PrintWriter pw = openFile("output/anim/verlet.xyz");
         String size = "6\n\n";
         String limits = "1 0 255\n-1 0 255\n";
         DataAcumulator dataAccumulator = new DataAcumulator();
+        SimulationHandler handler = readTxt(scanner);
 
         writeToFile(pw, size + limits + handler.printParticles());
-
         double outerStep = 0.01, lastTime = handler.getActualTime();
         handler.initParticles();
         while (handler.getActualTime() < handler.getTf()) {
@@ -46,14 +45,29 @@ public class App {
                 writeToFile(pw, size + limits + handler.printParticles());
             }
         }
-        handler.calculateCuadraticErrors(dataAccumulator, outerStep);
         JsonPrinter jsonPrinter = new JsonPrinter();
-        jsonPrinter.createArray(dataAccumulator);
+        jsonPrinter.createDataArray(dataAccumulator);
         String str1 = String.format("plots/positionOverTime.json");
-        String str2 = String.format("plots/errorsOverDelta.json");
         PrintWriter positionsVsT = openFile(str1);
-        PrintWriter errorVsDelta = openFile(str2);
         writeToFile(positionsVsT, jsonPrinter.getDataArray().toJSONString());
+        for(int i=1; i < 7;i++){
+            handler = readTxt(scanner);
+            handler.setStep(i*0.01);
+            writeToFile(pw, size + limits + handler.printParticles());
+            lastTime = handler.getActualTime();
+            handler.initParticles();
+            while (handler.getActualTime() < handler.getTf()) {
+                handler.iterate(dataAccumulator);
+                if (handler.getActualTime() - lastTime > outerStep ) {
+                    lastTime = handler.getActualTime();
+                    writeToFile(pw, size + limits + handler.printParticles());
+                }
+            }
+            handler.calculateCuadraticErrors(dataAccumulator, handler.getStep());
+        }
+        jsonPrinter.createErrorArray(dataAccumulator);
+        String str2 = String.format("plots/errorsOverDelta.json");
+        PrintWriter errorVsDelta = openFile(str2);
         writeToFile(errorVsDelta, jsonPrinter.getErrorArray().toJSONString());
     }
 

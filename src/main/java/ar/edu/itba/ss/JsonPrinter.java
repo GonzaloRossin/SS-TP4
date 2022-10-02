@@ -14,10 +14,13 @@ public class JsonPrinter {
         this.errorArray = new JSONArray();
     }
 
-    public void createArray(DataAcumulator dataAccumulator){
+    public void createDataArray(DataAcumulator dataAccumulator){
         for(int i = 0; i < dataAccumulator.getTlist().size();i++){
             addStep(dataAccumulator, i);
         }
+
+    }
+    public void createErrorArray(DataAcumulator dataAccumulator){
         for(int i=0;i < dataAccumulator.getDeltas().size();i++){
             addErrorStep(dataAccumulator,i);
         }
@@ -30,9 +33,6 @@ public class JsonPrinter {
         step.put("pVerlet", dataAcumulator.getPositions().get(Algorithm.VERLET).get(iteration));
         step.put("pBeeman", dataAcumulator.getPositions().get(Algorithm.BEEMAN).get(iteration));
         step.put("pGCP", dataAcumulator.getPositions().get(Algorithm.GCP).get(iteration));
-        step.put("GCPerror", dataAcumulator.getMeanCuadrticErrors().get(Algorithm.GCP));
-        step.put("beemanError", dataAcumulator.getMeanCuadrticErrors().get(Algorithm.BEEMAN));
-        step.put("verletError", dataAcumulator.getMeanCuadrticErrors().get(Algorithm.VERLET));
         dataArray.add(step);
     }
     public void addErrorStep(DataAcumulator dataAcumulator,int iteration){
