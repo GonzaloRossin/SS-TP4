@@ -46,12 +46,18 @@ public class App {
                 writeToFile(pw, size + limits + handler.printParticles());
             }
         }
+        handler.calculateCuadraticErrors(dataAccumulator, outerStep);
         JsonPrinter jsonPrinter = new JsonPrinter();
         jsonPrinter.createArray(dataAccumulator);
-        String str2 = String.format("plots/positionOverTime.json");
-        PrintWriter positionsVsT = openFile(str2);
+        String str1 = String.format("plots/positionOverTime.json");
+        String str2 = String.format("plots/errorsOverDelta.json");
+        PrintWriter positionsVsT = openFile(str1);
+        PrintWriter errorVsDelta = openFile(str2);
         writeToFile(positionsVsT, jsonPrinter.getDataArray().toJSONString());
+        writeToFile(errorVsDelta, jsonPrinter.getErrorArray().toJSONString());
     }
+
+
 
     public static SimulationHandler readTxt(Scanner scanner) {
         double mass = 0, K = 0, gamma = 0, tf = 0, r0 = 0, step = 0;

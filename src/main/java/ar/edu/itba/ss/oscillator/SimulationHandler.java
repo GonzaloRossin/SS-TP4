@@ -33,15 +33,39 @@ public class SimulationHandler {
     public void iterate(DataAcumulator dataAcumulator) {
 
         dataAcumulator.addT(actualTime);
-        dataAcumulator.addP(verletP.applyVerlet(step), Algorithm.VERLET);
-        dataAcumulator.addP(beemanP.applyBeeman(step), Algorithm.BEEMAN);
-        dataAcumulator.addP(gearPredictorP.applyGearPredictor5(step), Algorithm.GCP);
+        Double pVerlet = verletP.applyVerlet(step);
+        dataAcumulator.addP(pVerlet, Algorithm.VERLET);
+        Double pBeeman = beemanP.applyBeeman(step);
+        dataAcumulator.addP(pBeeman, Algorithm.BEEMAN);
+        Double pGCP = gearPredictorP.applyGearPredictor5(step);
+        dataAcumulator.addP(pGCP, Algorithm.GCP);
 
         analyticP.setActualR(calculateAnalyticR(analyticP));
-        dataAcumulator.addP(analyticP.getActualR().getX(), Algorithm.ANALITYCAL);
+        Double pAnalytical = analyticP.getActualR().getX();
+        dataAcumulator.addP(pAnalytical, Algorithm.ANALITYCAL);
+        calculateErrors(dataAcumulator, pVerlet, pBeeman, pGCP, pAnalytical);
         actualTime += step;
     }
 
+    public void calculateErrors(DataAcumulator dataAcumulator,Double pVerlet, Double pBeeman, Double pGCP, Double analytical){
+        dataAcumulator.addError(analytical-pVerlet, Algorithm.VERLET);
+        dataAcumulator.addError(analytical-pBeeman, Algorithm.BEEMAN);
+        dataAcumulator.addError(analytical-pGCP, Algorithm.GCP);
+    }
+
+    public void calculateCuadraticErrors(DataAcumulator dataAcumulator, Double delta){
+        Double verletCuadraticSum = 0.0, beemanCuadraticSum = 0.0, GCPcuadraticSum = 0.0;
+        int iterations = dataAcumulator.getTlist().size();
+        for(int i=0; i < iterations;i++){
+            verletCuadraticSum += Math.pow(dataAcumulator.getErrors().get(Algorithm.VERLET).get(i), 2);
+            beemanCuadraticSum += Math.pow(dataAcumulator.getErrors().get(Algorithm.BEEMAN).get(i), 2);
+            GCPcuadraticSum += Math.pow(dataAcumulator.getErrors().get(Algorithm.GCP).get(i), 2);
+        }
+        dataAcumulator.addMeanCuadraticError(verletCuadraticSum/iterations, Algorithm.VERLET);
+        dataAcumulator.addMeanCuadraticError(beemanCuadraticSum/iterations, Algorithm.BEEMAN);
+        dataAcumulator.addMeanCuadraticError(GCPcuadraticSum/iterations, Algorithm.GCP);
+        dataAcumulator.addDelta(delta);
+    }
     public Vector2 calculateAnalyticR(Particle p) {
         double exp = Math.exp(-(gamma/(2 * p.getMass())) * actualTime);
 

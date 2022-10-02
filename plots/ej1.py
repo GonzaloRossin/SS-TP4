@@ -1,4 +1,6 @@
 import matplotlib.pylab as plt
+import pandas as pd
+
 
 def mov_oscilador(timeAnalytical, posAnalytical, timeVerlet, posVerlet, timeBeeman, posBeeman, timeGCP, posGCP):
     plt.plot(timeAnalytical, posAnalytical, 'b-', label="Solución Analitica")
@@ -21,3 +23,13 @@ def error(deltaVerlet, errorVerlet, deltaBeeman, errorBeeman, deltaGCP, errorGCP
     plt.xscale("log")
     plt.yscale("log")
 
+
+df = pd.read_json('positionOverTime.json')
+
+pAnalytical = df['pAnalytical']
+pBeeman = df['pBeeman']
+pGCP = df['pGCP']
+pVerlet = df['pVerlet']
+x = df['time']
+
+mov_oscilador(x, pAnalytical, x, pVerlet, x, pBeeman, x, pGCP)
