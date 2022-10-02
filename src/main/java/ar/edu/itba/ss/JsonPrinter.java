@@ -5,16 +5,21 @@ import org.json.simple.JSONObject;
 
 public class JsonPrinter {
     JSONArray dataArray;
+    JSONArray errorArray;
 
 
 
     public JsonPrinter() {
         this.dataArray = new JSONArray();
+        this.errorArray = new JSONArray();
     }
 
     public void createArray(DataAcumulator dataAccumulator){
         for(int i = 0; i < dataAccumulator.getTlist().size();i++){
             addStep(dataAccumulator, i);
+        }
+        for(int i=0;i < dataAccumulator.getDeltas().size();i++){
+            addErrorStep(dataAccumulator,i);
         }
     }
 
@@ -30,8 +35,19 @@ public class JsonPrinter {
         step.put("verletError", dataAcumulator.getMeanCuadrticErrors().get(Algorithm.VERLET));
         dataArray.add(step);
     }
+    public void addErrorStep(DataAcumulator dataAcumulator,int iteration){
+        JSONObject step = new JSONObject();
+        step.put("delta", dataAcumulator.getDeltas().get(iteration));
+        step.put("errorVerlet",dataAcumulator.getMeanCuadrticErrors().get(Algorithm.VERLET).get(iteration));
+        step.put("errorBeeman",dataAcumulator.getMeanCuadrticErrors().get(Algorithm.BEEMAN).get(iteration));
+        step.put("errorGCP",dataAcumulator.getMeanCuadrticErrors().get(Algorithm.GCP).get(iteration));
+        errorArray.add(step);
+    }
 
     public JSONArray getDataArray() {
         return dataArray;
+    }
+    public JSONArray getErrorArray(){
+        return errorArray;
     }
 }

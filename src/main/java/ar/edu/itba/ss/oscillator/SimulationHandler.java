@@ -53,7 +53,7 @@ public class SimulationHandler {
         dataAcumulator.addError(analytical-pGCP, Algorithm.GCP);
     }
 
-    public void calculateCuadraticErrors(DataAcumulator dataAcumulator){
+    public void calculateCuadraticErrors(DataAcumulator dataAcumulator, Double delta){
         Double verletCuadraticSum = 0.0, beemanCuadraticSum = 0.0, GCPcuadraticSum = 0.0;
         int iterations = dataAcumulator.getTlist().size();
         for(int i=0; i < iterations;i++){
@@ -64,6 +64,7 @@ public class SimulationHandler {
         dataAcumulator.addMeanCuadraticError(verletCuadraticSum/iterations, Algorithm.VERLET);
         dataAcumulator.addMeanCuadraticError(beemanCuadraticSum/iterations, Algorithm.BEEMAN);
         dataAcumulator.addMeanCuadraticError(GCPcuadraticSum/iterations, Algorithm.GCP);
+        dataAcumulator.addDelta(delta);
     }
     public Vector2 calculateAnalyticR(Particle p) {
         double exp = Math.exp(-(gamma/(2 * p.getMass())) * actualTime);
