@@ -112,4 +112,8 @@ public class SimulationHandler {
     public double getStep() {
         return step;
     }
+
+    public void setStep(double step) {
+        this.step = step;
+    }
 }
