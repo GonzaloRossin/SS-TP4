@@ -21,7 +21,12 @@ public class Vector2 {
     }
 
     public Vector2 sum(Vector2 v) {
-        return new Vector2(x + v.getX(), y + getY());
+        return new Vector2(x + v.getX(), y + v.getY());
+    }
+
+    public Vector2 normalize() {
+        double aux = Math.sqrt(innerProduct(this));
+        return scalarProduct(1/aux);
     }
 
     public void set(Vector2 v) {
