@@ -14,14 +14,12 @@ def mov_oscilador(timeAnalytical, posAnalytical, timeVerlet, posVerlet, timeBeem
 
 
 def error(deltaVerlet, errorVerlet, deltaBeeman, errorBeeman, deltaGCP, errorGCP):
-    plt.plot(deltaVerlet, errorVerlet, 'b-o', label="Verlet")
-    plt.plot(deltaBeeman, errorBeeman, 'r-o', label="Beeman")
-    plt.plot(deltaGCP, errorGCP, 'g-o', label="Gear predictor-corrector")
+    plt.loglog(deltaVerlet, errorVerlet, 'b-o', label="Verlet")
+    plt.loglog(deltaBeeman, errorBeeman, 'r-o', label="Beeman")
+    plt.loglog(deltaGCP, errorGCP, 'g-o', label="Gear predictor-corrector")
     plt.legend()
     plt.xlabel("Δt (s) ", fontsize=16)
     plt.ylabel("Error cuadrático medio (m²)", fontsize=16)
-    plt.xscale("log")
-    plt.yscale("log")
     plt.show()
 
 
