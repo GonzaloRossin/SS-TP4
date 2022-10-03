@@ -22,9 +22,11 @@ public class App {
         readTxt(venus, ph, PlanetsInfo.VENUS);
 
         PrintWriter pw = openFile("output/anim/solarSystem.xyz");
-        String size = "3\n\n";
+        String size = "5\n\n";
+        double offset = 5.1E11;
+        String borders = "" + offset + " -" + offset + " 100\n" + "-" + offset + " " + offset + " 100\n";
 
-        writeToFile(pw, size + ph.printPlanets());
+        writeToFile(pw, size + ph.printPlanets() + borders);
 
         double outerStep = 3600 * 24, lastTime = ph.getActualTime();
         ph.initPlanets();
@@ -32,7 +34,7 @@ public class App {
             ph.iterate();
             if (ph.getActualTime() - lastTime > outerStep ) {
                 lastTime = ph.getActualTime();
-                writeToFile(pw, size + ph.printPlanets());
+                writeToFile(pw, size + ph.printPlanets() + borders);
             }
         }
     }
