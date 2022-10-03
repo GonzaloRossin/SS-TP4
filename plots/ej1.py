@@ -22,6 +22,7 @@ def error(deltaVerlet, errorVerlet, deltaBeeman, errorBeeman, deltaGCP, errorGCP
     plt.ylabel("Error cuadrático medio (m²)", fontsize=16)
     plt.xscale("log")
     plt.yscale("log")
+    plt.show()
 
 
 df = pd.read_json('positionOverTime.json')
