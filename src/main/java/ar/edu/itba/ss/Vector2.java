@@ -12,6 +12,14 @@ public class Vector2 {
         return this.x * v.getX() + this.y * v.getY();
     }
 
+    public double distanceTo(Vector2 v) {
+        return Math.sqrt(innerProduct(v));
+    }
+
+    public Vector2 getOrthogonal() {
+        return new Vector2(-y, x);
+    }
+
     public Vector2 scalarProduct(double k) {
         return new Vector2(x * k, y * k);
     }

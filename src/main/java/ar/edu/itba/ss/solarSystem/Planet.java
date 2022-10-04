@@ -8,13 +8,15 @@ public class Planet {
     private Vector2 actualR, lastR = new Vector2(0,0), actualV, actualForce;
     private double mass;
     private int color;
+    private String name;
     private double G = 0.00000000006693;
 
-    public Planet(Vector2 actualR, Vector2 actualV, double mass, int color) {
+    public Planet(Vector2 actualR, Vector2 actualV, PlanetsInfo planetsInfo) {
         this.actualR = actualR;
         this.actualV = actualV;
-        this.mass = mass;
-        this.color = color;
+        this.mass = planetsInfo.getMass();
+        this.color = planetsInfo.getColor();
+        this.name = planetsInfo.getName();
     }
 
     public void init(Planet p) {
@@ -94,11 +96,22 @@ public class Planet {
         Vector2 term3 = lastA.scalarProduct((1.0/6.0) * step);
 
         actualV = actualV.sum(term1).sum(term2).substract(term3);
-
         return actualR.getX();
     }
 
     public String toXYZ() {
         return String.format("%f %f %d\n", actualR.getX(), actualR.getY(), color);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Vector2 getActualR() {
+        return actualR;
+    }
+
+    public Vector2 getActualV() {
+        return actualV;
     }
 }

@@ -22,7 +22,7 @@ public class App {
         readTxt(venus, ph, PlanetsInfo.VENUS);
 
         PrintWriter pw = openFile("output/anim/solarSystem.xyz");
-        String size = "5\n\n";
+        String size = "6\n\n";
         double offset = 5.1E11;
         String borders = "" + offset + " -" + offset + " 100\n" + "-" + offset + " " + offset + " 100\n";
 
@@ -68,7 +68,9 @@ public class App {
         vx = Double.parseDouble(sc.next());
         vy = Double.parseDouble(sc.next());
 
-        Planet planet = new Planet(new Vector2(rx * 1000, ry * 1000), new Vector2(vx * 1000, vy * 1000), planetsInfo.getMass(), planetsInfo.getColor());
+        Planet planet = new Planet(new Vector2(rx * 1000, ry * 1000), new Vector2(vx * 1000, vy * 1000), planetsInfo);
         ph.addPlanet(planet);
+
+        sc.nextLine();
     }
 }
