@@ -10,7 +10,8 @@ public class PlanetsHandler {
     private final List<Planet> planetList = new ArrayList<>();
     private Planet starship;
     private double step = 300, actualTime = 0;
-    private double tf = 31536000.0 * 5;
+    private double tf = 31536000.0;
+    private String departureDate;
 
     public PlanetsHandler() {
         Planet sun = new Planet(new Vector2(0,0), new Vector2(0,0), PlanetsInfo.SUN);
@@ -81,5 +82,20 @@ public class PlanetsHandler {
 
     public double getTf() {
         return tf;
+    }
+
+    public void setDepartureDate(String departureDate) {
+        this.departureDate = departureDate;
+    }
+    public String getDepartureDate() {
+        return departureDate;
+    }
+
+    public double getStarshipToVenus() {
+        Planet venus = planetList.stream().filter(p -> {
+            return Objects.equals(p.getName(), "Venus");
+        }).findFirst().get();
+
+         return venus.getActualR().distanceTo(starship.getActualR());
     }
 }

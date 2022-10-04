@@ -1,5 +1,6 @@
 package ar.edu.itba.ss.solarSystem;
 
+import ar.edu.itba.ss.JsonPrinter;
 import ar.edu.itba.ss.Vector2;
 
 import java.io.InputStream;
@@ -13,8 +14,46 @@ import static ar.edu.itba.ss.Utils.writeToFile;
 public class App {
 
     public static void main(String[] args) {
-        PlanetsHandler ph = new PlanetsHandler();
+//        simulationMain();
+        tryMultipleDates();
+    }
 
+    public static void tryMultipleDates() {
+        Scanner earth = openInputFile("earth1monthStep3years.txt");
+        initTxt(earth);
+        Scanner venus = openInputFile("venus1monthStep3years.txt");
+        initTxt(venus);
+        JsonPrinter jp = new JsonPrinter();
+
+        for (PlanetsHandler ph = new PlanetsHandler(); ; ph = new PlanetsHandler()) {
+            if (!readTxt(earth, ph, PlanetsInfo.EARTH)) {
+                System.out.println("No more earth data");
+                break;
+            }
+            if (!readTxt(venus, ph, PlanetsInfo.VENUS)) {
+                System.out.println("No more Venus data");
+                break;
+            }
+
+            DataAccumSS dataAccumSS = new DataAccumSS();
+
+            double outerStep = 3600 * 24, lastTime = ph.getActualTime();
+            ph.initPlanets();
+            while (ph.getActualTime() < ph.getTf()) {
+                ph.iterate();
+                if (ph.getActualTime() - lastTime > outerStep ) {
+                    lastTime = ph.getActualTime();
+                }
+                dataAccumSS.setMinDistance(ph.getStarshipToVenus());
+            }
+            jp.addDateDistance(ph.getDepartureDate(), dataAccumSS.getMinDistance());
+        }
+        PrintWriter pw = openFile("plots/dateDistance.json");
+        writeToFile(pw, jp.getDateDistanceArray().toJSONString());
+    }
+
+    public static void simulationMain() {
+        PlanetsHandler ph = new PlanetsHandler();
         Scanner earth = openInputFile("earth.txt");
         readTxt(earth, ph, PlanetsInfo.EARTH);
 
@@ -38,6 +77,7 @@ public class App {
             }
         }
     }
+
     public static Scanner openInputFile(String filepath) {
         // Locating inputs.txt in resources
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -52,11 +92,19 @@ public class App {
         return new Scanner(is);
     }
 
-    private static void readTxt(Scanner sc, PlanetsHandler ph, PlanetsInfo planetsInfo) {
-        double rx, ry, vx, vy;
+    private static void initTxt(Scanner sc) {
         while (!Objects.equals(sc.nextLine(), "$$SOE"));
+    }
 
-        // Skip to the good part
+    private static boolean readTxt(Scanner sc, PlanetsHandler ph, PlanetsInfo planetsInfo) {
+        double rx, ry, vx, vy;
+        // Skip to the good par
+        if (Objects.equals(sc.next(), "$$EOE")) {
+            return false;
+        }
+        sc.next(); sc.next();
+        ph.setDepartureDate(sc.next());
+//        ph.setDepartureDate(sc.next() + " " + sc.next());
         sc.nextLine();
         sc.next();
         sc.next();
@@ -72,5 +120,7 @@ public class App {
         ph.addPlanet(planet);
 
         sc.nextLine();
+        sc.nextLine();
+        return true;
     }
 }

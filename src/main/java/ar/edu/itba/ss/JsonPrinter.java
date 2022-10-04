@@ -7,11 +7,23 @@ public class JsonPrinter {
     JSONArray dataArray;
     JSONArray errorArray;
 
-
+    JSONArray dateDistanceArray;
 
     public JsonPrinter() {
         this.dataArray = new JSONArray();
         this.errorArray = new JSONArray();
+        this.dateDistanceArray = new JSONArray();
+    }
+
+    public void addDateDistance(String date, double distance) {
+        JSONObject toAdd = new JSONObject();
+        toAdd.put("date", date);
+        toAdd.put("distance", distance);
+        dateDistanceArray.add(toAdd);
+    }
+
+    public JSONArray getDateDistanceArray() {
+        return dateDistanceArray;
     }
 
     public void createDataArray(DataAcumulator dataAccumulator){
