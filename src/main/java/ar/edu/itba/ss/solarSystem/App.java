@@ -14,14 +14,14 @@ import static ar.edu.itba.ss.Utils.writeToFile;
 public class App {
 
     public static void main(String[] args) {
-//        simulationMain();
+        simulationMain();
         tryMultipleDates();
     }
 
     public static void tryMultipleDates() {
-        Scanner earth = openInputFile("earth1monthStep3years.txt");
+        Scanner earth = openInputFile("earth_1minStep_24_05_2023_0200.txt");
         initTxt(earth);
-        Scanner venus = openInputFile("venus1monthStep3years.txt");
+        Scanner venus = openInputFile("venus_1minStep_24_05_2023_0200.txt");
         initTxt(venus);
         JsonPrinter jp = new JsonPrinter();
 
@@ -34,7 +34,6 @@ public class App {
                 System.out.println("No more Venus data");
                 break;
             }
-
             DataAccumSS dataAccumSS = new DataAccumSS();
 
             double outerStep = 3600 * 24, lastTime = ph.getActualTime();
@@ -44,9 +43,9 @@ public class App {
                 if (ph.getActualTime() - lastTime > outerStep ) {
                     lastTime = ph.getActualTime();
                 }
-                dataAccumSS.setMinDistance(ph.getStarshipToVenus());
+                dataAccumSS.setMinDistance(ph.getStarshipToVenus(), ph.getActualTime());
             }
-            jp.addDateDistance(ph.getDepartureDate(), dataAccumSS.getMinDistance());
+            jp.addDateDistance(ph.getDepartureDate(), dataAccumSS.getMinDistance(), dataAccumSS.getTime());
         }
         PrintWriter pw = openFile("plots/dateDistance.json");
         writeToFile(pw, jp.getDateDistanceArray().toJSONString());
@@ -54,10 +53,12 @@ public class App {
 
     public static void simulationMain() {
         PlanetsHandler ph = new PlanetsHandler();
-        Scanner earth = openInputFile("earth.txt");
+        Scanner earth = openInputFile("earth_24_05_2023_0312.txt");
+        initTxt(earth);
         readTxt(earth, ph, PlanetsInfo.EARTH);
 
-        Scanner venus = openInputFile("venus.txt");
+        Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
+        initTxt(venus);
         readTxt(venus, ph, PlanetsInfo.VENUS);
 
         PrintWriter pw = openFile("output/anim/solarSystem.xyz");
@@ -67,7 +68,7 @@ public class App {
 
         writeToFile(pw, size + ph.printPlanets() + borders);
 
-        double outerStep = 3600 * 24, lastTime = ph.getActualTime();
+        double outerStep = 300, lastTime = ph.getActualTime();
         ph.initPlanets();
         while (ph.getActualTime() < ph.getTf()) {
             ph.iterate();
@@ -103,8 +104,7 @@ public class App {
             return false;
         }
         sc.next(); sc.next();
-        ph.setDepartureDate(sc.next());
-//        ph.setDepartureDate(sc.next() + " " + sc.next());
+        ph.setDepartureDate(sc.next() + " " + sc.next());
         sc.nextLine();
         sc.next();
         sc.next();

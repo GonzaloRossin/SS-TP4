@@ -10,7 +10,7 @@ public class PlanetsHandler {
     private final List<Planet> planetList = new ArrayList<>();
     private Planet starship;
     private double step = 300, actualTime = 0;
-    private double tf = 31536000.0;
+    private double tf = 7776000.0;
     private String departureDate;
 
     public PlanetsHandler() {
@@ -34,7 +34,7 @@ public class PlanetsHandler {
         double earthRadius = 6378137.0;
         double ISSAltitude = 400.0;
 
-        double distanceToStarship = earthPosition.distanceTo(earthPosition) - earthRadius - ISSAltitude;
+        double distanceToStarship = earthPosition.module() - earthRadius - ISSAltitude;
         return sunEarthVersor.scalarProduct(distanceToStarship);
     }
 
@@ -92,9 +92,7 @@ public class PlanetsHandler {
     }
 
     public double getStarshipToVenus() {
-        Planet venus = planetList.stream().filter(p -> {
-            return Objects.equals(p.getName(), "Venus");
-        }).findFirst().get();
+        Planet venus = planetList.stream().filter(p -> Objects.equals(p.getName(), "Venus")).findFirst().get();
 
          return venus.getActualR().distanceTo(starship.getActualR());
     }

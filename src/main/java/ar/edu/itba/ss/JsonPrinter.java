@@ -15,10 +15,11 @@ public class JsonPrinter {
         this.dateDistanceArray = new JSONArray();
     }
 
-    public void addDateDistance(String date, double distance) {
+    public void addDateDistance(String date, double distance, double time) {
         JSONObject toAdd = new JSONObject();
         toAdd.put("date", date);
         toAdd.put("distance", distance);
+        toAdd.put("time", time);
         dateDistanceArray.add(toAdd);
     }
 

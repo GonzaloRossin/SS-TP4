@@ -12,8 +12,13 @@ public class Vector2 {
         return this.x * v.getX() + this.y * v.getY();
     }
 
+    public double module() {
+        return Math.sqrt(innerProduct(this));
+    }
+
     public double distanceTo(Vector2 v) {
-        return Math.sqrt(innerProduct(v));
+        double dx = x - v.getX(), dy = y - v.getY();
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     public Vector2 getOrthogonal() {
