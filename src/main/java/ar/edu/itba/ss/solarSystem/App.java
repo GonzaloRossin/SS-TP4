@@ -60,6 +60,7 @@ public class App {
         Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
         initTxt(venus);
         readTxt(venus, ph, PlanetsInfo.VENUS);
+        JsonPrinter jp = new JsonPrinter();
 
         PrintWriter pw = openFile("output/anim/solarSystem.xyz");
         String size = "6\n\n";
@@ -67,6 +68,8 @@ public class App {
         String borders = "" + offset + " -" + offset + " 100\n" + "-" + offset + " " + offset + " 100\n";
 
         writeToFile(pw, size + ph.printPlanets() + borders);
+
+        DataAccumSS dataAccumSS = new DataAccumSS();
 
         double outerStep = 300, lastTime = ph.getActualTime();
         ph.initPlanets();
@@ -76,7 +79,12 @@ public class App {
                 lastTime = ph.getActualTime();
                 writeToFile(pw, size + ph.printPlanets() + borders);
             }
+            dataAccumSS.addTime(ph.getActualTime());
+            dataAccumSS.addVelocity(ph.getStarship().getActualV().module());
         }
+        jp.setVelocityArray(dataAccumSS.getvArray(), dataAccumSS.getTimeArray());
+        pw = openFile("plots/VmoduleTime.json");
+        writeToFile(pw,jp.getVelocityArray().toJSONString());
     }
 
     public static Scanner openInputFile(String filepath) {

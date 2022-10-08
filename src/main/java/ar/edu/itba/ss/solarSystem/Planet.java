@@ -3,6 +3,7 @@ package ar.edu.itba.ss.solarSystem;
 import ar.edu.itba.ss.Vector2;
 
 import java.util.List;
+import java.util.Locale;
 
 public class Planet {
     private Vector2 actualR, lastR = new Vector2(0,0), actualV, actualForce;
@@ -100,7 +101,7 @@ public class Planet {
     }
 
     public String toXYZ() {
-        return String.format("%f %f %d\n", actualR.getX(), actualR.getY(), color);
+        return String.format(Locale.US,"%f %f %d\n", actualR.getX(), actualR.getY(), color);
     }
 
     public String getName() {

@@ -15,8 +15,12 @@ def distancia_vs_dia_de_despegue(dia, distancia, time):
 
 distancia_vs_dia_de_despegue(df["date"], df["distance"], df["time"])
 
+df = pd.read_json('VmoduleTime.json')
+
 def velocidad_vs_tiempo(tiempo, velocidad):
     plt.plot(velocidad, tiempo, 'b')
     plt.xlabel("Tiempo pasado desde despegue (s)", fontsize=16)
     plt.ylabel("Modulo de la velocidad (km/s)", fontsize=16)
     plt.show()
+
+velocidad_vs_tiempo(df['time'],df['v'])

@@ -87,6 +87,9 @@ public class PlanetsHandler {
     public void setDepartureDate(String departureDate) {
         this.departureDate = departureDate;
     }
+
+    public Planet getStarship() {return starship;}
+
     public String getDepartureDate() {
         return departureDate;
     }
