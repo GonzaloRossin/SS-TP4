@@ -1,19 +1,21 @@
 package ar.edu.itba.ss.solarSystem;
 
 public enum PlanetsInfo {
-    EARTH(5.97219E24, 60, "Earth"),
-    SUN(1.988500E30, 75, "Sun"),
-    VENUS(4.8685E24, 0, "Venus"),
-    STARSHIP(2.0E5, 30, "Starship");
+    EARTH(5.97219E24, 60, "Earth", 6371000),
+    SUN(1.988500E30, 75, "Sun", 696340000),
+    VENUS(4.8685E24, 0, "Venus", 6051800),
+    STARSHIP(2.0E5, 30, "Starship",1000);
 
     final double mass;
     final int color;
+    final int radius;
     final String name;
 
-    PlanetsInfo(double mass, int color, String name) {
+    PlanetsInfo(double mass, int color, String name, int radius) {
         this.mass = mass;
         this.color = color;
         this.name = name;
+        this.radius = radius;
     }
 
     public double getMass() {
@@ -26,5 +28,9 @@ public enum PlanetsInfo {
 
     public String getName() {
         return name;
+    }
+
+    public int getRadius() {
+        return radius;
     }
 }

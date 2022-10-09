@@ -12,6 +12,7 @@ import static ar.edu.itba.ss.Utils.openFile;
 import static ar.edu.itba.ss.Utils.writeToFile;
 
 public class App {
+    private static final int SECONDS_IN_DAY = 86400;
 
     public static void main(String[] args) {
         simulationMain();
@@ -72,15 +73,18 @@ public class App {
         DataAccumSS dataAccumSS = new DataAccumSS();
 
         double outerStep = 300, lastTime = ph.getActualTime();
+        int days = 0;
         ph.initPlanets();
-        while (ph.getActualTime() < ph.getTf()) {
+        while (ph.getActualTime() < ph.getTf() && ph.getStarshipToVenus() > PlanetsInfo.VENUS.getRadius()) {
             ph.iterate();
             if (ph.getActualTime() - lastTime > outerStep ) {
                 lastTime = ph.getActualTime();
                 writeToFile(pw, size + ph.printPlanets() + borders);
             }
-            dataAccumSS.addTime(ph.getActualTime());
-            dataAccumSS.addVelocity(ph.getStarship().getActualV().module());
+            if(ph.getActualTime() % SECONDS_IN_DAY == 0){
+                dataAccumSS.addTime((double) ++days);
+                dataAccumSS.addVelocity(ph.getStarship().getActualV().module());
+            }
         }
         jp.setVelocityArray(dataAccumSS.getvArray(), dataAccumSS.getTimeArray());
         pw = openFile("plots/VmoduleTime.json");
