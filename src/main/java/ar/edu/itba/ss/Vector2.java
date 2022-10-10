@@ -42,6 +42,10 @@ public class Vector2 {
         return scalarProduct(1/aux);
     }
 
+    public Vector2 clone() {
+        return new Vector2(x, y);
+    }
+
     public void set(Vector2 v) {
         x = v.getX();
         y = v.getY();

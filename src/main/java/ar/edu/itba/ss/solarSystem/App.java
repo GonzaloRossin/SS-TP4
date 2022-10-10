@@ -16,7 +16,8 @@ public class App {
 
     public static void main(String[] args) {
         simulationMain();
-        tryMultipleDates();
+//        tryMultipleDates();
+        tryDifferentVelocities();
     }
 
     public static void tryMultipleDates() {
@@ -72,7 +73,7 @@ public class App {
 
         DataAccumSS dataAccumSS = new DataAccumSS();
 
-        double outerStep = 300, lastTime = ph.getActualTime();
+        double outerStep = 3600 * 24, lastTime = ph.getActualTime();
         int days = 0;
         ph.initPlanets();
         while (ph.getActualTime() < ph.getTf() && ph.getStarshipToVenus() > PlanetsInfo.VENUS.getRadius()) {
@@ -90,6 +91,38 @@ public class App {
         pw = openFile("plots/VmoduleTime.json");
         writeToFile(pw,jp.getVelocityArray().toJSONString());
     }
+
+    public static void tryDifferentVelocities() {
+        PlanetsHandler initialPh = new PlanetsHandler();
+        Scanner earth = openInputFile("earth_24_05_2023_0312.txt");
+        initTxt(earth);
+        readTxt(earth, initialPh, PlanetsInfo.EARTH);
+
+        Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
+        initTxt(venus);
+        readTxt(venus, initialPh, PlanetsInfo.VENUS);
+        double minTime = Double.MAX_VALUE, minVModule = 0;
+        for (double i = -10; i < 10; i += 0.1) {
+            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed() + i);
+
+            double outerStep = 300, lastTime = ph.getActualTime();
+            ph.initPlanets();
+            while (ph.getActualTime() < ph.getTf() && ph.getStarshipToVenus() > PlanetsInfo.VENUS.getRadius()) {
+                ph.iterate();
+                if (ph.getActualTime() - lastTime > outerStep ) {
+                    lastTime = ph.getActualTime();
+                }
+            }
+            if (ph.getStarshipToVenus() <= PlanetsInfo.VENUS.getRadius()) {
+                if (minTime > ph.getActualTime()) {
+                    minTime = ph.getActualTime();
+                    minVModule = ph.getStarshipInitialSpeed();
+                }
+            }
+        }
+        System.out.println(minTime + " " + minVModule);
+    }
+
 
     public static Scanner openInputFile(String filepath) {
         // Locating inputs.txt in resources
