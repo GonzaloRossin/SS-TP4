@@ -1,3 +1,4 @@
+from cProfile import label
 import matplotlib.pylab as plt
 import pandas as pd
 
@@ -27,9 +28,10 @@ velocidad_vs_tiempo(df['time'],df['v'])
 
 def v0VsTime():
     df = pd.read_json('minDistanceOverVelocity.json')
-    plt.plot(df['velocity'], df['elapsed_time'])
+    plt.plot(df['velocity'], df['elapsed_time'],'b', label='horas')
     plt.xlabel("Modulo de la velocidad (km/s)", fontsize=16)
-    plt.ylabel("Tiempo pasado desde despegue (días)", fontsize=16)
+    plt.ylabel("Tiempo pasado desde despegue", fontsize=16)
+    plt.legend()
     plt.show()
 
 v0VsTime()
