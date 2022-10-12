@@ -99,6 +99,7 @@ public class App {
         readTxt(earth, initialPh, PlanetsInfo.EARTH);
 
         Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
+        JsonPrinter jp = new JsonPrinter();
         initTxt(venus);
         readTxt(venus, initialPh, PlanetsInfo.VENUS);
         double minTime = Double.MAX_VALUE, minVModule = 0;
@@ -114,12 +115,15 @@ public class App {
                 }
             }
             if (ph.getStarshipToVenus() <= PlanetsInfo.VENUS.getRadius()) {
+                jp.addMinDistanceVelocity(ph.getStarshipInitialSpeed(), ph.getActualTime()/3600);
                 if (minTime > ph.getActualTime()) {
                     minTime = ph.getActualTime();
                     minVModule = ph.getStarshipInitialSpeed();
                 }
             }
         }
+        PrintWriter pw = openFile("plots/minDistanceOverVelocity.json");
+        writeToFile(pw,jp.getMinDistanceVelocity().toJSONString());
         System.out.println(minTime + " " + minVModule);
     }
 
