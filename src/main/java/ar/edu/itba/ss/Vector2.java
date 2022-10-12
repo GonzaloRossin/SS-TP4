@@ -74,4 +74,9 @@ public class Vector2 {
     public void setY(double y) {
         this.y = y;
     }
+
+    public Vector2 rotate(double departureAngle) {
+        double angle = Math.atan2(y, x);
+        return new Vector2(Math.cos(angle + departureAngle), Math.sin(angle + departureAngle)).scalarProduct(module());
+    }
 }

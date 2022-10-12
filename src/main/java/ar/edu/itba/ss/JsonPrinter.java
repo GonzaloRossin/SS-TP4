@@ -79,4 +79,12 @@ public class JsonPrinter {
     public JSONArray getErrorArray(){
         return errorArray;
     }
+
+    public void addAngleDistance(double angle, double distance, double time) {
+        JSONObject toAdd = new JSONObject();
+        toAdd.put("angle", angle);
+        toAdd.put("distance", distance);
+        toAdd.put("time", time);
+        dateDistanceArray.add(toAdd);
+    }
 }
