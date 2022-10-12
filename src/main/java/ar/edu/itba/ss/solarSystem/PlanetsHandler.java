@@ -11,11 +11,24 @@ public class PlanetsHandler {
     private Planet starship;
     private double step = 300, actualTime = 0;
     private double tf = 7776000.0;
+    double starshipInitialSpeed = 8000.0;
     private String departureDate;
 
     public PlanetsHandler() {
         Planet sun = new Planet(new Vector2(0,0), new Vector2(0,0), PlanetsInfo.SUN);
         planetList.add(sun);
+    }
+
+    public PlanetsHandler clonePh(double starshipInitialSpeed) {
+        PlanetsHandler ph = new PlanetsHandler();
+        ph.setStarshipInitialSpeed(starshipInitialSpeed);
+        for (Planet p : getPlanetList()) {
+            if (!Objects.equals(p.getName(), "Sun")) {
+                ph.addPlanet(p.clonePlanet());
+            }
+        }
+        ph.setDepartureDate(getDepartureDate());
+        return ph;
     }
 
     public void addPlanet(Planet planet) {
@@ -41,7 +54,6 @@ public class PlanetsHandler {
     public Vector2 calculateStarshipV(Planet planet) {
         Vector2 radialVersor = planet.getActualR().normalize();
         Vector2 orbitalVersor = radialVersor.getOrthogonal();
-        double starshipInitialSpeed = 8000.0;
 
         Vector2 earthV = planet.getActualV();
         double earthOrbitalSpeedPro = orbitalVersor.innerProduct(earthV);
@@ -87,6 +99,9 @@ public class PlanetsHandler {
     public void setDepartureDate(String departureDate) {
         this.departureDate = departureDate;
     }
+
+    public Planet getStarship() {return starship;}
+
     public String getDepartureDate() {
         return departureDate;
     }
@@ -95,5 +110,17 @@ public class PlanetsHandler {
         Planet venus = planetList.stream().filter(p -> Objects.equals(p.getName(), "Venus")).findFirst().get();
 
          return venus.getActualR().distanceTo(starship.getActualR());
+    }
+
+    public List<Planet> getPlanetList() {
+        return planetList;
+    }
+
+    public double getStarshipInitialSpeed() {
+        return starshipInitialSpeed;
+    }
+
+    public void setStarshipInitialSpeed(double starshipInitialSpeed) {
+        this.starshipInitialSpeed = starshipInitialSpeed;
     }
 }

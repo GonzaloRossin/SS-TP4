@@ -3,16 +3,23 @@ package ar.edu.itba.ss;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.util.List;
+
 public class JsonPrinter {
     JSONArray dataArray;
     JSONArray errorArray;
 
     JSONArray dateDistanceArray;
+    JSONArray velocityArray;
+
+    JSONArray minDistanceVelocity;
 
     public JsonPrinter() {
         this.dataArray = new JSONArray();
         this.errorArray = new JSONArray();
         this.dateDistanceArray = new JSONArray();
+        this.velocityArray = new JSONArray();
+        this.minDistanceVelocity = new JSONArray();
     }
 
     public void addDateDistance(String date, double distance, double time) {
@@ -56,6 +63,25 @@ public class JsonPrinter {
         step.put("errorGCP",dataAcumulator.getMeanCuadrticErrors().get(Algorithm.GCP).get(iteration));
         errorArray.add(step);
     }
+    public void setVelocityArray(List<Double> v, List<Double> time){
+        for(int i = 0; i< time.size();i++){
+            JSONObject step = new JSONObject();
+            step.put("time", time.get(i));
+            step.put("v", v.get(i));
+            velocityArray.add(step);
+        }
+    }
+    public void addMinDistanceVelocity(Double velocity,Double elpasedDays){
+        JSONObject step = new JSONObject();
+        step.put("velocity", velocity);
+        step.put("elapsed_time", elpasedDays);
+        minDistanceVelocity.add(step);
+    }
+
+    public JSONArray getVelocityArray() {
+        return velocityArray;
+    }
+    public JSONArray getMinDistanceVelocity(){return minDistanceVelocity;}
 
     public JSONArray getDataArray() {
         return dataArray;

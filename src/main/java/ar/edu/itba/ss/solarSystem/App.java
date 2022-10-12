@@ -12,10 +12,12 @@ import static ar.edu.itba.ss.Utils.openFile;
 import static ar.edu.itba.ss.Utils.writeToFile;
 
 public class App {
+    private static final int SECONDS_IN_DAY = 86400;
 
     public static void main(String[] args) {
         simulationMain();
-        tryMultipleDates();
+//        tryMultipleDates();
+        tryDifferentVelocities();
     }
 
     public static void tryMultipleDates() {
@@ -60,6 +62,7 @@ public class App {
         Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
         initTxt(venus);
         readTxt(venus, ph, PlanetsInfo.VENUS);
+        JsonPrinter jp = new JsonPrinter();
 
         PrintWriter pw = openFile("output/anim/solarSystem.xyz");
         String size = "6\n\n";
@@ -68,16 +71,62 @@ public class App {
 
         writeToFile(pw, size + ph.printPlanets() + borders);
 
-        double outerStep = 300, lastTime = ph.getActualTime();
+        DataAccumSS dataAccumSS = new DataAccumSS();
+
+        double outerStep = 3600 * 24, lastTime = ph.getActualTime();
+        int days = 0;
         ph.initPlanets();
-        while (ph.getActualTime() < ph.getTf()) {
+        while (ph.getActualTime() < ph.getTf() && ph.getStarshipToVenus() > PlanetsInfo.VENUS.getRadius()) {
             ph.iterate();
             if (ph.getActualTime() - lastTime > outerStep ) {
                 lastTime = ph.getActualTime();
                 writeToFile(pw, size + ph.printPlanets() + borders);
             }
+            if(ph.getActualTime() % SECONDS_IN_DAY == 0){
+                dataAccumSS.addTime((double) ++days);
+                dataAccumSS.addVelocity(ph.getStarship().getActualV().module());
+            }
         }
+        jp.setVelocityArray(dataAccumSS.getvArray(), dataAccumSS.getTimeArray());
+        pw = openFile("plots/VmoduleTime.json");
+        writeToFile(pw,jp.getVelocityArray().toJSONString());
     }
+
+    public static void tryDifferentVelocities() {
+        PlanetsHandler initialPh = new PlanetsHandler();
+        Scanner earth = openInputFile("earth_24_05_2023_0312.txt");
+        initTxt(earth);
+        readTxt(earth, initialPh, PlanetsInfo.EARTH);
+
+        Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
+        JsonPrinter jp = new JsonPrinter();
+        initTxt(venus);
+        readTxt(venus, initialPh, PlanetsInfo.VENUS);
+        double minTime = Double.MAX_VALUE, minVModule = 0;
+        for (double i = -10; i < 10; i += 0.1) {
+            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed() + i);
+
+            double outerStep = 300, lastTime = ph.getActualTime();
+            ph.initPlanets();
+            while (ph.getActualTime() < ph.getTf() && ph.getStarshipToVenus() > PlanetsInfo.VENUS.getRadius()) {
+                ph.iterate();
+                if (ph.getActualTime() - lastTime > outerStep ) {
+                    lastTime = ph.getActualTime();
+                }
+            }
+            if (ph.getStarshipToVenus() <= PlanetsInfo.VENUS.getRadius()) {
+                jp.addMinDistanceVelocity(ph.getStarshipInitialSpeed(), ph.getActualTime()/3600);
+                if (minTime > ph.getActualTime()) {
+                    minTime = ph.getActualTime();
+                    minVModule = ph.getStarshipInitialSpeed();
+                }
+            }
+        }
+        PrintWriter pw = openFile("plots/minDistanceOverVelocity.json");
+        writeToFile(pw,jp.getMinDistanceVelocity().toJSONString());
+        System.out.println(minTime + " " + minVModule);
+    }
+
 
     public static Scanner openInputFile(String filepath) {
         // Locating inputs.txt in resources

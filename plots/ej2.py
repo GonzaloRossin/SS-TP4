@@ -1,3 +1,4 @@
+from cProfile import label
 import matplotlib.pylab as plt
 import pandas as pd
 
@@ -15,8 +16,22 @@ def distancia_vs_dia_de_despegue(dia, distancia, time):
 
 distancia_vs_dia_de_despegue(df["date"], df["distance"], df["time"])
 
+df = pd.read_json('VmoduleTime.json')
+
 def velocidad_vs_tiempo(tiempo, velocidad):
-    plt.plot(velocidad, tiempo, 'b')
-    plt.xlabel("Tiempo pasado desde despegue (s)", fontsize=16)
+    plt.plot(tiempo, velocidad, 'b')
+    plt.xlabel("Tiempo pasado desde despegue (días)", fontsize=16)
     plt.ylabel("Modulo de la velocidad (km/s)", fontsize=16)
     plt.show()
+
+velocidad_vs_tiempo(df['time'],df['v'])
+
+def v0VsTime():
+    df = pd.read_json('minDistanceOverVelocity.json')
+    plt.plot(df['velocity'], df['elapsed_time'], label='horas')
+    plt.xlabel("Modulo de la velocidad (km/s)", fontsize=16)
+    plt.ylabel("Tiempo pasado desde despegue", fontsize=16)
+    plt.legend()
+    plt.show()
+
+v0VsTime()

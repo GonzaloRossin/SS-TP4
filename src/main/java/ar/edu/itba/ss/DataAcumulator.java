@@ -15,19 +15,19 @@ public class DataAcumulator {
     public DataAcumulator() {
         Tlist = new ArrayList<>();
         positions = new HashMap<>();
-        positions.put(Algorithm.ANALITYCAL, new ArrayList<Double>());
-        positions.put(Algorithm.VERLET, new ArrayList<Double>());
-        positions.put(Algorithm.BEEMAN, new ArrayList<Double>());
-        positions.put(Algorithm.GCP, new ArrayList<Double>());
+        positions.put(Algorithm.ANALITYCAL, new ArrayList<>());
+        positions.put(Algorithm.VERLET, new ArrayList<>());
+        positions.put(Algorithm.BEEMAN, new ArrayList<>());
+        positions.put(Algorithm.GCP, new ArrayList<>());
         errors = new HashMap<>();
         deltas  = new ArrayList<>();
-        errors.put(Algorithm.VERLET, new ArrayList<Double>());
-        errors.put(Algorithm.BEEMAN, new ArrayList<Double>());
-        errors.put(Algorithm.GCP, new ArrayList<Double>());
+        errors.put(Algorithm.VERLET, new ArrayList<>());
+        errors.put(Algorithm.BEEMAN, new ArrayList<>());
+        errors.put(Algorithm.GCP, new ArrayList<>());
         meanCuadrticErrors = new HashMap<>();
-        meanCuadrticErrors.put(Algorithm.VERLET, new ArrayList<Double>());
-        meanCuadrticErrors.put(Algorithm.BEEMAN, new ArrayList<Double>());
-        meanCuadrticErrors.put(Algorithm.GCP, new ArrayList<Double>());
+        meanCuadrticErrors.put(Algorithm.VERLET, new ArrayList<>());
+        meanCuadrticErrors.put(Algorithm.BEEMAN, new ArrayList<>());
+        meanCuadrticErrors.put(Algorithm.GCP, new ArrayList<>());
     }
 
     public void addP(Double position, Algorithm algorithm) {

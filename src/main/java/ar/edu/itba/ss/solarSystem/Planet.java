@@ -3,9 +3,11 @@ package ar.edu.itba.ss.solarSystem;
 import ar.edu.itba.ss.Vector2;
 
 import java.util.List;
+import java.util.Locale;
 
 public class Planet {
     private Vector2 actualR, lastR = new Vector2(0,0), actualV, actualForce;
+    private PlanetsInfo planetsInfo;
     private double mass;
     private int color;
     private String name;
@@ -14,9 +16,14 @@ public class Planet {
     public Planet(Vector2 actualR, Vector2 actualV, PlanetsInfo planetsInfo) {
         this.actualR = actualR;
         this.actualV = actualV;
+        this.planetsInfo = planetsInfo;
         this.mass = planetsInfo.getMass();
         this.color = planetsInfo.getColor();
         this.name = planetsInfo.getName();
+    }
+
+    public Planet clonePlanet() {
+        return new Planet(actualR.clone(), actualV.clone(), planetsInfo);
     }
 
     public void init(Planet p) {
@@ -100,7 +107,7 @@ public class Planet {
     }
 
     public String toXYZ() {
-        return String.format("%f %f %d\n", actualR.getX(), actualR.getY(), color);
+        return String.format(Locale.US,"%f %f %d\n", actualR.getX(), actualR.getY(), color);
     }
 
     public String getName() {
