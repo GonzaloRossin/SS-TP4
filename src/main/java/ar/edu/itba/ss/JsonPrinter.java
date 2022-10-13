@@ -12,11 +12,14 @@ public class JsonPrinter {
     JSONArray dateDistanceArray;
     JSONArray velocityArray;
 
+    JSONArray minDistanceVelocity;
+
     public JsonPrinter() {
         this.dataArray = new JSONArray();
         this.errorArray = new JSONArray();
         this.dateDistanceArray = new JSONArray();
         this.velocityArray = new JSONArray();
+        this.minDistanceVelocity = new JSONArray();
     }
 
     public void addDateDistance(String date, double distance, double time) {
@@ -68,10 +71,17 @@ public class JsonPrinter {
             velocityArray.add(step);
         }
     }
+    public void addMinDistanceVelocity(Double velocity,Double elpasedDays){
+        JSONObject step = new JSONObject();
+        step.put("velocity", velocity);
+        step.put("elapsed_time", elpasedDays);
+        minDistanceVelocity.add(step);
+    }
 
     public JSONArray getVelocityArray() {
         return velocityArray;
     }
+    public JSONArray getMinDistanceVelocity(){return minDistanceVelocity;}
 
     public JSONArray getDataArray() {
         return dataArray;
