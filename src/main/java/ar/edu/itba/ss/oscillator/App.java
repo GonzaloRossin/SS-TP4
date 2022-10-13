@@ -6,6 +6,8 @@ import ar.edu.itba.ss.Utils;
 import ar.edu.itba.ss.Vector2;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static ar.edu.itba.ss.Utils.openFile;
@@ -54,9 +56,12 @@ public class App {
         jsonPrinter.addCuadraticErrors(handler, dataAccumulator);
         writeToFile(positionsErrors, jsonPrinter.getCuadraticErrors().toJSONString());
         writeToFile(positionsVsT, jsonPrinter.getDataArray().toJSONString());
-        for(int i=1; i < 7;i++){
-            handler = readTxt(scanner);
-            handler.setStep(i*0.01);
+        List<Double> steps = createStepArray();
+        for(Double step : steps){
+            InputStream is2 = classloader.getResourceAsStream("inputs.txt");
+            Scanner scanner2 = new Scanner(is2);
+            handler = readTxt(scanner2);
+            handler.setStep(step);
             writeToFile(pw, size + limits + handler.printParticles());
             lastTime = handler.getActualTime();
             handler.initParticles();
@@ -75,7 +80,14 @@ public class App {
         writeToFile(errorVsDelta, jsonPrinter.getErrorArray().toJSONString());
     }
 
-
+    private static List<Double> createStepArray(){
+        List<Double> stepList = new ArrayList<>();
+        stepList.add(0.01);
+        stepList.add(0.001);
+        stepList.add(0.0001);
+        stepList.add(0.00001);
+        return stepList;
+    }
 
     public static SimulationHandler readTxt(Scanner scanner) {
         double mass = 0, K = 0, gamma = 0, tf = 0, r0 = 0, step = 0;

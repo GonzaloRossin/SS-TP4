@@ -44,7 +44,7 @@ pGCP = df['pGCP']
 pVerlet = df['pVerlet']
 x = df['time']
 
-#mov_oscilador(x, pAnalytical, pVerlet, pBeeman, pGCP)
-#errorOverTime(delta, errorVerlet, errorBeeman, errorGCP)
+mov_oscilador(x, pAnalytical, pVerlet, pBeeman, pGCP)
+errorOverTime(delta, errorVerlet, errorBeeman, errorGCP)
 df = pd.read_json('errorsPositions.json')
 errors(df)
