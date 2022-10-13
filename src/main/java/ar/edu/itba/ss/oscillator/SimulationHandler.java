@@ -5,11 +5,14 @@ import ar.edu.itba.ss.DataAcumulator;
 import ar.edu.itba.ss.Particle;
 import ar.edu.itba.ss.Vector2;
 
+import java.util.List;
+
 public class SimulationHandler {
     private Particle verletP, analyticP, beemanP, gearPredictorP;
     private double K;
     private double gamma;
     private double tf;
+    private double meanCuadraticErrorVerlet = 0, meanCuadraticErrorBeeman = 0, meanCuadraticErrorGCP = 0;
     private double actualTime = 0, step;
 
 
@@ -66,6 +69,15 @@ public class SimulationHandler {
         dataAcumulator.addMeanCuadraticError(GCPcuadraticSum/iterations, Algorithm.GCP);
         dataAcumulator.addDelta(delta);
     }
+
+    public Double getCuadraticError(List<Double> errorList){
+        Double cuadraticSum = 0.0;
+        for (Double aDouble : errorList) {
+            cuadraticSum += Math.pow(aDouble, 2);
+        }
+        return cuadraticSum/errorList.size();
+    }
+
     public Vector2 calculateAnalyticR(Particle p) {
         double exp = Math.exp(-(gamma/(2 * p.getMass())) * actualTime);
 

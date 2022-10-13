@@ -48,7 +48,11 @@ public class App {
         JsonPrinter jsonPrinter = new JsonPrinter();
         jsonPrinter.createDataArray(dataAccumulator);
         String str1 = String.format("plots/positionOverTime.json");
+        String str3 = String.format("plots/errorsPositions.json");
         PrintWriter positionsVsT = openFile(str1);
+        PrintWriter positionsErrors = openFile(str3);
+        jsonPrinter.addCuadraticErrors(handler, dataAccumulator);
+        writeToFile(positionsErrors, jsonPrinter.getCuadraticErrors().toJSONString());
         writeToFile(positionsVsT, jsonPrinter.getDataArray().toJSONString());
         for(int i=1; i < 7;i++){
             handler = readTxt(scanner);

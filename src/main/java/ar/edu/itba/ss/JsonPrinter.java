@@ -1,5 +1,6 @@
 package ar.edu.itba.ss;
 
+import ar.edu.itba.ss.oscillator.SimulationHandler;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -8,6 +9,7 @@ import java.util.List;
 public class JsonPrinter {
     JSONArray dataArray;
     JSONArray errorArray;
+    JSONArray cuadraticErrors;
 
     JSONArray dateDistanceArray;
     JSONArray velocityArray;
@@ -20,6 +22,7 @@ public class JsonPrinter {
         this.dateDistanceArray = new JSONArray();
         this.velocityArray = new JSONArray();
         this.minDistanceVelocity = new JSONArray();
+        this.cuadraticErrors = new JSONArray();
     }
 
     public void addDateDistance(String date, double distance, double time) {
@@ -32,6 +35,21 @@ public class JsonPrinter {
 
     public JSONArray getDateDistanceArray() {
         return dateDistanceArray;
+    }
+
+    public void addCuadraticErrors(SimulationHandler simulationHandler, DataAcumulator dataAcumulator){
+        Double errorVerlet = simulationHandler.getCuadraticError(dataAcumulator.getErrors().get(Algorithm.VERLET));
+        Double errorBeeman = simulationHandler.getCuadraticError(dataAcumulator.getErrors().get(Algorithm.BEEMAN));
+        Double errorGCP = simulationHandler.getCuadraticError(dataAcumulator.getErrors().get(Algorithm.GCP));
+        JSONObject toAdd = new JSONObject();
+        toAdd.put("errorVerlet", errorVerlet);
+        toAdd.put("errorBeeman", errorBeeman);
+        toAdd.put("errorGCP", errorGCP);
+        cuadraticErrors.add(toAdd);
+    }
+
+    public JSONArray getCuadraticErrors() {
+        return cuadraticErrors;
     }
 
     public void createDataArray(DataAcumulator dataAccumulator){
