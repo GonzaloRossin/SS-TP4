@@ -26,6 +26,7 @@ def errors(df):
     y = [df['errorVerlet'][0], df['errorBeeman'][0], df['errorGCP'][0]]
     x = ['Verlet', 'Beeman', 'GCP']
     plt.bar(x, y)
+    plt.yscale('log')
     plt.ylabel("Error cuadrático medio (m²)", fontsize=16)
     plt.show()
 
@@ -46,4 +47,4 @@ x = df['time']
 #mov_oscilador(x, pAnalytical, pVerlet, pBeeman, pGCP)
 #errorOverTime(delta, errorVerlet, errorBeeman, errorGCP)
 df = pd.read_json('errorsPositions.json')
-errors()
+errors(df)
