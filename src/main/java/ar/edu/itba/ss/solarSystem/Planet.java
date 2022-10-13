@@ -30,6 +30,10 @@ public class Planet {
         actualForce = calculateGravity(p);
     }
 
+    public PlanetsInfo getPlanetsInfo() {
+        return planetsInfo;
+    }
+
     private Vector2 calculateGravity(Planet p) {
         Vector2 aux = p.actualR.substract(actualR);
         double distanceSquared = aux.innerProduct(aux);

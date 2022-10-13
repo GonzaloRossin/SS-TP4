@@ -102,8 +102,8 @@ public class App {
         JsonPrinter jp = new JsonPrinter();
         initTxt(venus);
         readTxt(venus, initialPh, PlanetsInfo.VENUS);
-        double minTime = Double.MAX_VALUE, minVModule = 0;
-        for (double i = -10; i < 10; i += 0.1) {
+        double minTime = Double.MAX_VALUE, minVModule = 0, relativeVelocity = 0;
+        for (double i = -10; i < 20; i += 1) {
             PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed() + i);
 
             double outerStep = 300, lastTime = ph.getActualTime();
@@ -118,12 +118,18 @@ public class App {
                 jp.addMinDistanceVelocity(ph.getStarshipInitialSpeed(), ph.getActualTime()/3600);
                 if (minTime > ph.getActualTime()) {
                     minTime = ph.getActualTime();
+                    for( Planet planet: ph.getPlanetList()){
+                        if(planet.getPlanetsInfo() == PlanetsInfo.VENUS)
+                            relativeVelocity = ph.getStarship().getActualV().substract(planet.getActualV()).module()/1000;
+                    }
+
                     minVModule = ph.getStarshipInitialSpeed();
                 }
             }
         }
         PrintWriter pw = openFile("plots/minDistanceOverVelocity.json");
         writeToFile(pw,jp.getMinDistanceVelocity().toJSONString());
+        System.out.println("relative velocity= "+ relativeVelocity +" km/s");
         System.out.println(minTime + " " + minVModule);
     }
 
