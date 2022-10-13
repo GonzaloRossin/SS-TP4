@@ -17,7 +17,8 @@ public class App {
     public static void main(String[] args) {
         simulationMain();
 //        tryMultipleDates();
-        tryDifferentVelocities();
+//        tryDifferentVelocities();
+        tryDifferentDepartureAngles();
     }
 
     public static void tryMultipleDates() {
@@ -55,17 +56,22 @@ public class App {
 
     public static void simulationMain() {
         PlanetsHandler ph = new PlanetsHandler();
-        Scanner earth = openInputFile("earth_24_05_2023_0312.txt");
+        Scanner earth = openInputFile("earth10daysStep3years.txt");
         initTxt(earth);
         readTxt(earth, ph, PlanetsInfo.EARTH);
 
-        Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
+        Scanner venus = openInputFile("venus10daysStep3years.txt");
         initTxt(venus);
         readTxt(venus, ph, PlanetsInfo.VENUS);
+
+        Scanner mars = openInputFile("mars10daysStep3years.txt");
+        initTxt(mars);
+        readTxt(mars, ph, PlanetsInfo.MARS);
+
         JsonPrinter jp = new JsonPrinter();
 
         PrintWriter pw = openFile("output/anim/solarSystem.xyz");
-        String size = "6\n\n";
+        String size = "7\n\n";
         double offset = 5.1E11;
         String borders = "" + offset + " -" + offset + " 100\n" + "-" + offset + " " + offset + " 100\n";
 
@@ -104,7 +110,7 @@ public class App {
         readTxt(venus, initialPh, PlanetsInfo.VENUS);
         double minTime = Double.MAX_VALUE, minVModule = 0;
         for (double i = -10; i < 10; i += 0.1) {
-            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed() + i);
+            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed() + i, Math.PI / 2);
 
             double outerStep = 300, lastTime = ph.getActualTime();
             ph.initPlanets();
@@ -125,6 +131,44 @@ public class App {
         PrintWriter pw = openFile("plots/minDistanceOverVelocity.json");
         writeToFile(pw,jp.getMinDistanceVelocity().toJSONString());
         System.out.println(minTime + " " + minVModule);
+    }
+
+    public static void tryDifferentDepartureAngles() {
+        PlanetsHandler initialPh = new PlanetsHandler();
+        Scanner earth = openInputFile("earth10daysStep3years.txt");
+        initTxt(earth);
+        readTxt(earth, initialPh, PlanetsInfo.EARTH);
+
+        Scanner venus = openInputFile("venus10daysStep3years.txt");
+        initTxt(venus);
+        readTxt(venus, initialPh, PlanetsInfo.VENUS);
+
+        Scanner mars = openInputFile("mars10daysStep3years.txt");
+        initTxt(mars);
+        readTxt(mars, initialPh, PlanetsInfo.MARS);
+        JsonPrinter jp = new JsonPrinter();
+//        for (double i = 0; i < Math.PI / 2; i += Math.PI / (2 * 16)) {
+//        for (double i = 1.08 - 0.1; i < 1.08 + 0.1; i += 0.001) {
+        for (double i = 1.114 - 0.001; i < 1.114 + 0.001; i += 0.0001) {
+            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed(), initialPh.getDepartureAngle() + i);
+
+            DataAccumSS dataAccumSS = new DataAccumSS();
+            double outerStep = 300, lastTime = ph.getActualTime();
+            ph.initPlanets();
+            while (ph.getActualTime() < ph.getTf() && ph.getStarshipToMars() > PlanetsInfo.MARS.getRadius()) {
+                ph.iterate();
+                if (ph.getActualTime() - lastTime > outerStep ) {
+                    lastTime = ph.getActualTime();
+                }
+                dataAccumSS.setMinDistance(ph.getStarshipToMars(), ph.getActualTime());
+            }
+            if (ph.getStarshipToMars() <= PlanetsInfo.MARS.getRadius()) {
+                System.out.println("Llego");
+            }
+            jp.addAngleDistance(ph.getDepartureAngle(), dataAccumSS.getMinDistance(), dataAccumSS.getTime());
+        }
+        PrintWriter pw = openFile("plots/angleDistance.json");
+        writeToFile(pw, jp.getDateDistanceArray().toJSONString());
     }
 
 

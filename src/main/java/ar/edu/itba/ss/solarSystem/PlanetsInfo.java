@@ -4,7 +4,8 @@ public enum PlanetsInfo {
     EARTH(5.97219E24, 60, "Earth", 6371000),
     SUN(1.988500E30, 75, "Sun", 696340000),
     VENUS(4.8685E24, 0, "Venus", 6051800),
-    STARSHIP(2.0E5, 30, "Starship",1000);
+    STARSHIP(2.0E5, 30, "Starship",1000),
+    MARS(6.4171E23, 100, "Mars", 3389000),;
 
     final double mass;
     final int color;
