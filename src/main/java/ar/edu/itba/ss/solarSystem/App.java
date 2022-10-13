@@ -15,7 +15,7 @@ public class App {
     private static final int SECONDS_IN_DAY = 86400;
 
     public static void main(String[] args) {
-        simulationMain();
+//        simulationMain();
 //        tryMultipleDates();
 //        tryDifferentVelocities();
         tryDifferentDepartureAngles();
@@ -46,11 +46,15 @@ public class App {
                 if (ph.getActualTime() - lastTime > outerStep ) {
                     lastTime = ph.getActualTime();
                 }
-                dataAccumSS.setMinDistance(ph.getStarshipToVenus(), ph.getActualTime());
+                double distanceToVenus = ph.getStarshipToVenus();
+                if (distanceToVenus < 0) {
+                    distanceToVenus = 0;
+                }
+                dataAccumSS.setMinDistance(distanceToVenus, ph.getActualTime());
             }
             jp.addDateDistance(ph.getDepartureDate(), dataAccumSS.getMinDistance(), dataAccumSS.getTime());
         }
-        PrintWriter pw = openFile("plots/dateDistance.json");
+        PrintWriter pw = openFile("plots/dateDistanceMin.json");
         writeToFile(pw, jp.getDateDistanceArray().toJSONString());
     }
 
@@ -82,7 +86,7 @@ public class App {
         double outerStep = 3600 * 24, lastTime = ph.getActualTime();
         int days = 0;
         ph.initPlanets();
-        while (ph.getActualTime() < ph.getTf() && ph.getStarshipToVenus() > PlanetsInfo.VENUS.getRadius()) {
+        while (ph.getActualTime() < ph.getTf() && ph.getStarshipToMars() > PlanetsInfo.MARS.getRadius()) {
             ph.iterate();
             if (ph.getActualTime() - lastTime > outerStep ) {
                 lastTime = ph.getActualTime();
@@ -155,19 +159,22 @@ public class App {
             DataAccumSS dataAccumSS = new DataAccumSS();
             double outerStep = 300, lastTime = ph.getActualTime();
             ph.initPlanets();
+            System.out.println(ph.systemEnergy());
             while (ph.getActualTime() < ph.getTf() && ph.getStarshipToMars() > PlanetsInfo.MARS.getRadius()) {
                 ph.iterate();
                 if (ph.getActualTime() - lastTime > outerStep ) {
                     lastTime = ph.getActualTime();
                 }
-                dataAccumSS.setMinDistance(ph.getStarshipToMars(), ph.getActualTime());
+                double distanceToMars = ph.getStarshipToMars();
+                if (distanceToMars <= PlanetsInfo.MARS.getRadius()) {
+                    distanceToMars = 0;
+                }
+                dataAccumSS.setMinDistance(distanceToMars, ph.getActualTime());
             }
-            if (ph.getStarshipToMars() <= PlanetsInfo.MARS.getRadius()) {
-                System.out.println("Llego");
-            }
+            System.out.println(ph.systemEnergy());
             jp.addAngleDistance(ph.getDepartureAngle(), dataAccumSS.getMinDistance(), dataAccumSS.getTime());
         }
-        PrintWriter pw = openFile("plots/angleDistance.json");
+        PrintWriter pw = openFile("plots/angleDistanceSmallStep.json");
         writeToFile(pw, jp.getDateDistanceArray().toJSONString());
     }
 

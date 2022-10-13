@@ -95,6 +95,17 @@ public class PlanetsHandler {
         return orbitalVersor.scalarProduct(velocityModule);
     }
 
+    public double systemEnergy() {
+        double energy = 0;
+        for (Planet p : planetList) {
+            energy += p.getGravitationEnergy(planetList);
+            energy += p.getKineticEnergy();
+        }
+        energy += starship.getGravitationEnergy(planetList);
+        energy += starship.getKineticEnergy();
+        return energy;
+    }
+
     public void initPlanets() {
         for(Planet planet : planetList) {
             planet.applyEulerModified(planetList, step);
@@ -140,7 +151,7 @@ public class PlanetsHandler {
 
     public double getStarshipToVenus() {
         Planet venus = planetList.stream().filter(p -> Objects.equals(p.getName(), "Venus")).findFirst().get();
-        return venus.getActualR().distanceTo(starship.getActualR());
+        return venus.getActualR().distanceTo(starship.getActualR()) - PlanetsInfo.VENUS.getRadius();
     }
 
     public double getStarshipToMars() {

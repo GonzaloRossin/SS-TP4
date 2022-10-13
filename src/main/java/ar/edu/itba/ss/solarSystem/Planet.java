@@ -121,4 +121,18 @@ public class Planet {
     public Vector2 getActualV() {
         return actualV;
     }
+
+    public double getGravitationEnergy(List<Planet> planets) {
+        double energy = 0;
+        for (Planet p: planets) {
+            if (this != p) {
+                energy += -G * mass * p.mass / actualR.distanceTo(p.actualR);
+            }
+        }
+        return energy;
+    }
+
+    public double getKineticEnergy() {
+        return 0.5 * mass * actualV.module() * actualV.module();
+    }
 }
