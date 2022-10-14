@@ -11,6 +11,8 @@ public class JsonPrinter {
 
     JSONArray dateDistanceArray;
     JSONArray velocityArray;
+    JSONArray energyErrorArray;
+
 
     JSONArray minDistanceVelocity;
 
@@ -20,6 +22,18 @@ public class JsonPrinter {
         this.dateDistanceArray = new JSONArray();
         this.velocityArray = new JSONArray();
         this.minDistanceVelocity = new JSONArray();
+        this.energyErrorArray = new JSONArray();
+    }
+
+    public void addStepEnergyError(double energy, double step) {
+        JSONObject toAdd = new JSONObject();
+        toAdd.put("step", step);
+        toAdd.put("energy", energy);
+        energyErrorArray.add(toAdd);
+    }
+
+    public JSONArray getEnergyErrorArray() {
+        return energyErrorArray;
     }
 
     public void addDateDistance(String date, double distance, double time) {

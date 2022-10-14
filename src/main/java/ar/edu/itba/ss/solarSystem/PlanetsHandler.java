@@ -19,10 +19,11 @@ public class PlanetsHandler {
         planetList.add(sun);
     }
 
-    public PlanetsHandler clonePh(double starshipInitialSpeed, double departureAngle) {
+    public PlanetsHandler clonePh(double starshipInitialSpeed, double departureAngle, double step) {
         PlanetsHandler ph = new PlanetsHandler();
         ph.setStarshipInitialSpeed(starshipInitialSpeed);
         ph.setDepartureAngle(departureAngle);
+        ph.setStep(step);
         for (Planet p : getPlanetList()) {
             if (!Objects.equals(p.getName(), "Sun")) {
                 ph.addPlanet(p.clonePlanet());
@@ -99,7 +100,8 @@ public class PlanetsHandler {
         double energy = 0;
         for (Planet p : planetList) {
             energy += p.getGravitationEnergy(planetList);
-            energy += p.getKineticEnergy();
+            double kinetic = p.getKineticEnergy();
+            energy += kinetic;
         }
         energy += starship.getGravitationEnergy(planetList);
         energy += starship.getKineticEnergy();
@@ -155,8 +157,8 @@ public class PlanetsHandler {
     }
 
     public double getStarshipToMars() {
-        Planet venus = planetList.stream().filter(p -> Objects.equals(p.getName(), "Mars")).findFirst().get();
-        return venus.getActualR().distanceTo(starship.getActualR());
+        Planet mars = planetList.stream().filter(p -> Objects.equals(p.getName(), "Mars")).findFirst().get();
+        return mars.getActualR().distanceTo(starship.getActualR());
     }
 
     public List<Planet> getPlanetList() {
@@ -173,5 +175,14 @@ public class PlanetsHandler {
 
     public double getDepartureAngle() {
         return departureAngle;
+    }
+
+    public void setStep(double step) {
+        this.step = step;
+    }
+
+    public double getStarshipVModuleRelativeMars() {
+        Planet mars = planetList.stream().filter(p -> Objects.equals(p.getName(), "Mars")).findFirst().get();
+        return starship.getActualV().substract(mars.getActualV()).module();
     }
 }

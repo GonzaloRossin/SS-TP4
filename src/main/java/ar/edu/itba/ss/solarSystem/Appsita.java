@@ -11,7 +11,7 @@ import java.util.Scanner;
 import static ar.edu.itba.ss.Utils.openFile;
 import static ar.edu.itba.ss.Utils.writeToFile;
 
-public class App {
+public class Appsita {
     private static final int SECONDS_IN_DAY = 86400;
 
     public static void main(String[] args) {
@@ -19,12 +19,13 @@ public class App {
 //        tryMultipleDates();
 //        tryDifferentVelocities();
         tryDifferentDepartureAngles();
+//        tryDifferentSteps();
     }
 
     public static void tryMultipleDates() {
-        Scanner earth = openInputFile("earth_1minStep_24_05_2023_0200.txt");
+        Scanner earth = openInputFile("earth_24_05_2023_0312.txt");
         initTxt(earth);
-        Scanner venus = openInputFile("venus_1minStep_24_05_2023_0200.txt");
+        Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
         initTxt(venus);
         JsonPrinter jp = new JsonPrinter();
 
@@ -49,6 +50,7 @@ public class App {
                 double distanceToVenus = ph.getStarshipToVenus();
                 if (distanceToVenus < 0) {
                     distanceToVenus = 0;
+                    System.out.println(ph.getDepartureDate());
                 }
                 dataAccumSS.setMinDistance(distanceToVenus, ph.getActualTime());
             }
@@ -60,22 +62,22 @@ public class App {
 
     public static void simulationMain() {
         PlanetsHandler ph = new PlanetsHandler();
-        Scanner earth = openInputFile("earth10daysStep3years.txt");
+        Scanner earth = openInputFile("earth_24_05_2023_0312.txt");
         initTxt(earth);
         readTxt(earth, ph, PlanetsInfo.EARTH);
 
-        Scanner venus = openInputFile("venus10daysStep3years.txt");
+        Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
         initTxt(venus);
         readTxt(venus, ph, PlanetsInfo.VENUS);
 
-        Scanner mars = openInputFile("mars10daysStep3years.txt");
-        initTxt(mars);
-        readTxt(mars, ph, PlanetsInfo.MARS);
+//        Scanner mars = openInputFile("mars10daysStep3years.txt");
+//        initTxt(mars);
+//        readTxt(mars, ph, PlanetsInfo.MARS);
 
         JsonPrinter jp = new JsonPrinter();
 
         PrintWriter pw = openFile("output/anim/solarSystem.xyz");
-        String size = "7\n\n";
+        String size = "6\n\n";
         double offset = 5.1E11;
         String borders = "" + offset + " -" + offset + " 100\n" + "-" + offset + " " + offset + " 100\n";
 
@@ -86,7 +88,7 @@ public class App {
         double outerStep = 3600 * 24, lastTime = ph.getActualTime();
         int days = 0;
         ph.initPlanets();
-        while (ph.getActualTime() < ph.getTf() && ph.getStarshipToMars() > PlanetsInfo.MARS.getRadius()) {
+        while (ph.getActualTime() < ph.getTf() && ph.getStarshipToVenus() > PlanetsInfo.VENUS.getRadius()) {
             ph.iterate();
             if (ph.getActualTime() - lastTime > outerStep ) {
                 lastTime = ph.getActualTime();
@@ -114,7 +116,7 @@ public class App {
         readTxt(venus, initialPh, PlanetsInfo.VENUS);
         double minTime = Double.MAX_VALUE, minVModule = 0;
         for (double i = -10; i < 10; i += 0.1) {
-            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed() + i, Math.PI / 2);
+            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed() + i, Math.PI / 2, 300);
 
             double outerStep = 300, lastTime = ph.getActualTime();
             ph.initPlanets();
@@ -154,12 +156,11 @@ public class App {
 //        for (double i = 0; i < Math.PI / 2; i += Math.PI / (2 * 16)) {
 //        for (double i = 1.08 - 0.1; i < 1.08 + 0.1; i += 0.001) {
         for (double i = 1.114 - 0.001; i < 1.114 + 0.001; i += 0.0001) {
-            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed(), initialPh.getDepartureAngle() + i);
+            PlanetsHandler ph = initialPh.clonePh(initialPh.getStarshipInitialSpeed(), initialPh.getDepartureAngle() + i, 300);
 
             DataAccumSS dataAccumSS = new DataAccumSS();
             double outerStep = 300, lastTime = ph.getActualTime();
             ph.initPlanets();
-            System.out.println(ph.systemEnergy());
             while (ph.getActualTime() < ph.getTf() && ph.getStarshipToMars() > PlanetsInfo.MARS.getRadius()) {
                 ph.iterate();
                 if (ph.getActualTime() - lastTime > outerStep ) {
@@ -168,14 +169,41 @@ public class App {
                 double distanceToMars = ph.getStarshipToMars();
                 if (distanceToMars <= PlanetsInfo.MARS.getRadius()) {
                     distanceToMars = 0;
+                    double vRelativeModule = ph.getStarshipVModuleRelativeMars();
+                    System.out.println(vRelativeModule / 1000);
                 }
                 dataAccumSS.setMinDistance(distanceToMars, ph.getActualTime());
             }
-            System.out.println(ph.systemEnergy());
             jp.addAngleDistance(ph.getDepartureAngle(), dataAccumSS.getMinDistance(), dataAccumSS.getTime());
         }
         PrintWriter pw = openFile("plots/angleDistanceSmallStep.json");
         writeToFile(pw, jp.getDateDistanceArray().toJSONString());
+    }
+
+    public static void tryDifferentSteps() {
+        PlanetsHandler initialPh = new PlanetsHandler();
+        Scanner earth = openInputFile("earth_24_05_2023_0312.txt");
+        initTxt(earth);
+        readTxt(earth, initialPh, PlanetsInfo.EARTH);
+
+        Scanner venus = openInputFile("venus_24_05_2023_0312.txt");
+        JsonPrinter jp = new JsonPrinter();
+        initTxt(venus);
+        readTxt(venus, initialPh, PlanetsInfo.VENUS);
+        for (double i = 5; i > -1; i--) {
+            double step = Math.pow(10, i);
+            PlanetsHandler ph = initialPh.clonePh(8000, Math.PI / 2, step);
+            ph.initPlanets();
+            double initialEnergy = ph.systemEnergy();
+            while (ph.getActualTime() < ph.getTf()) {
+                ph.iterate();
+            }
+            double finalEnergy = ph.systemEnergy();
+            double error = (finalEnergy - initialEnergy) / initialEnergy;
+            jp.addStepEnergyError(error, step);
+        }
+        PrintWriter pw = openFile("plots/energyError.json");
+        writeToFile(pw, jp.getEnergyErrorArray().toJSONString());
     }
 
 
