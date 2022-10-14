@@ -115,7 +115,7 @@ public class App {
                 }
             }
             if (ph.getStarshipToVenus() <= PlanetsInfo.VENUS.getRadius()) {
-                jp.addMinDistanceVelocity(ph.getStarshipInitialSpeed(), ph.getActualTime()/3600);
+                jp.addMinDistanceVelocity(ph.getStarshipInitialSpeed(), ph.getActualTime()/SECONDS_IN_DAY);
                 if (minTime > ph.getActualTime()) {
                     minTime = ph.getActualTime();
                     for( Planet planet: ph.getPlanetList()){

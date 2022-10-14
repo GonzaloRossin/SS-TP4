@@ -28,10 +28,11 @@ velocidad_vs_tiempo(df['time'],df['v'])
 
 def v0VsTime():
     df = pd.read_json('minDistanceOverVelocity.json')
-    plt.scatter(df['velocity'], df['elapsed_time'], label='horas',marker='x')
+    plt.scatter(df['velocity'], df['elapsed_time'], label='dias',marker='x')
     plt.xlabel("Modulo de la velocidad (km/s)", fontsize=16)
     plt.ylabel("Tiempo pasado desde despegue", fontsize=16)
     plt.legend()
+    plt.grid(True)
     plt.show()
 
 v0VsTime()
